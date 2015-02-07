@@ -3,17 +3,17 @@
     {
       "idiom" : "universal",
       "scale" : "1x",
-      "filename" : "lightbulb.jpg"
+      "filename" : "lightbulb-2.png"
     },
     {
       "idiom" : "universal",
       "scale" : "2x",
-      "filename" : "lightbulb-1.jpg"
+      "filename" : "lightbulb-1.png"
     },
     {
       "idiom" : "universal",
       "scale" : "3x",
-      "filename" : "lightbulb-2.jpg"
+      "filename" : "lightbulb.png"
     }
   ],
   "info" : {

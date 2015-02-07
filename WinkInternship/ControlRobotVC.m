@@ -8,7 +8,7 @@
 
 #import "ControlRobotVC.h"
 #import "LightInWink.h"
-
+#import <CoreImage/CoreImage.h>
 
 static NSString * const BaseAPIString = @"https://winkapi.quirky.com/";
 static NSString * const kAccessToken = @"access_token";
@@ -19,18 +19,38 @@ static NSString * const kLoggedIn = @"loggedinalready";
 
 @interface ControlRobotVC ()
 
+@property (nonatomic, strong) NSNumber *numberOfWarmSliderValueUpdates;
+@property (nonatomic, strong) NSNumber *numberOfCoolSliderValueUpdates;
+
+
+@property (nonatomic, strong) NSMutableArray *allLightImageViews;
 @property (nonatomic, strong) NSMutableArray *activeLightsForTemperatureEffect;
+@property (weak, nonatomic) IBOutlet UISlider *warmSlider;
+@property (weak, nonatomic) IBOutlet UISlider *coolSlider;
+- (IBAction)warmSliderChangedValue:(id)sender;
+- (IBAction)coolSliderChangedValue:(id)sender;
 
 @end
 
 @implementation ControlRobotVC
 
-@synthesize userLights, activeLightsForTemperatureEffect;
+@synthesize userLights, activeLightsForTemperatureEffect, warmSlider, coolSlider, numberOfCoolSliderValueUpdates, numberOfWarmSliderValueUpdates;
 
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
+    //Setup Sliders
+    self.coolSlider.minimumValue = 0;
+    self.coolSlider.maximumValue = 10000;
+
+    self.warmSlider.minimumValue = 0;
+    self.warmSlider.maximumValue = 10000;
+    
+    self.numberOfWarmSliderValueUpdates = 0;
+    self.numberOfCoolSliderValueUpdates = 0;
+
+    self.allLightImageViews = [[NSMutableArray alloc] init];
     self.activeLightsForTemperatureEffect = [[NSMutableArray alloc] init];
     
     NSArray *allLights = self.userLights;
@@ -66,6 +86,7 @@ static NSString * const kLoggedIn = @"loggedinalready";
         //add to view
         [self.view addSubview:lightImageView];
         
+        [self.allLightImageViews addObject:lightImageView];
     }
     
 
@@ -95,41 +116,53 @@ static NSString * const kLoggedIn = @"loggedinalready";
         NSLog(@"Turn bulb off");
         tappedImage.image = [UIImage imageNamed:@"BulbOff"];
         [self.activeLightsForTemperatureEffect removeObject:[NSNumber numberWithFloat:lightID]];
+        
+        
+        /*
+        CIImage *inputImage = [[CIImage alloc] initWithImage:[UIImage imageNamed:@"BulbOff"]];
+        CIFilter *temperatureAdjustment = [CIFilter filterWithName:@"CITemperatureAndTint"];
+        
+        [temperatureAdjustment setDefaults];
+        [temperatureAdjustment setValue:inputImage forKey:@"inputImage"];
+        [temperatureAdjustment setValue:[CIVector vectorWithX:10000 Y:0] forKey:@"inputNeutral"];
+        [temperatureAdjustment setValue:[CIVector vectorWithX:10000 Y:0] forKey:@"inputTargetNeutral"];
+        
+        CIImage *outputImage = [temperatureAdjustment valueForKey:@"outputImage"];
+        
+        CIContext *context = [CIContext contextWithOptions:nil];
+        tappedImage.image = [UIImage imageWithCGImage:[context createCGImage:outputImage fromRect:outputImage.extent]];
+        */
+        
+        
+        
+        
+        
     } else {
         NSLog(@"Turn bulb on");
         tappedImage.image = [UIImage imageNamed:@"BulbLit"];
         [self.activeLightsForTemperatureEffect addObject:[NSNumber numberWithFloat:lightID]];
+        
+        
+        /*
+        CIImage *inputImage = [[CIImage alloc] initWithImage:[UIImage imageNamed:@"BulbLit"]];
+        CIFilter *temperatureAdjustment = [CIFilter filterWithName:@"CITemperatureAndTint"];
+        
+        [temperatureAdjustment setDefaults];
+        [temperatureAdjustment setValue:inputImage forKey:@"inputImage"];
+        [temperatureAdjustment setValue:[CIVector vectorWithX:100 Y:0] forKey:@"inputNeutral"];
+        [temperatureAdjustment setValue:[CIVector vectorWithX:10000 Y:0] forKey:@"inputTargetNeutral"];
+        
+        CIImage *outputImage = [temperatureAdjustment valueForKey:@"outputImage"];
+        
+        CIContext *context = [CIContext contextWithOptions:nil];
+        tappedImage.image = [UIImage imageWithCGImage:[context createCGImage:outputImage fromRect:outputImage.extent]];
+         
+        */
+        
     }
     
     NSLog(@"Current Active Lights = %@", self.activeLightsForTemperatureEffect);
 
-    
-    /*
-    if (tappedImage.image == [UIImage imageNamed:@"BulbLit"]) {
-        NSLog(@"Turn bulb off");
-        tappedImage.image = [UIImage imageNamed:@"BulbOff"];
-        [self.activeLightsForTemperatureEffect removeObject:[NSNumber numberWithInteger:lightID]];
-    } else {
-        NSLog(@"Turn bulb on");
-        tappedImage.image = [UIImage imageNamed:@"BulbLit"];
-        [self.activeLightsForTemperatureEffect addObject:[NSNumber numberWithInteger:lightID]];
-    }
-    
-    NSLog(@"Current Active Lights = %@", self.activeLightsForTemperatureEffect);
-    */
-    
-    
-    /*
-     //Remove old tap gesture recognizers
-     for (UIGestureRecognizer *gr in tappedIconView.gestureRecognizers) {
-     [tappedIconView removeGestureRecognizer:gr];
-     }
-     
-     //Add back a gesture recognizer for unfollow user
-     UITapGestureRecognizer *tapUnFollow = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(unFollowUser:)];
-     [tappedIconView addGestureRecognizer:tapUnFollow];
-     
-     */
     
 }
 
@@ -210,6 +243,90 @@ static NSString * const kLoggedIn = @"loggedinalready";
 
 
 
+
+
+- (IBAction)warmSliderChangedValue:(id)sender {
+    
+    NSLog(@"Number Of Updates: %@", self.numberOfWarmSliderValueUpdates);
+    
+    if (self.numberOfWarmSliderValueUpdates.integerValue > 10) {
+        
+        for (UIImageView *lightBulbImageView in self.allLightImageViews) {
+        
+            //UIImageView *lightBulbImageView = [self.allLightImageViews firstObject];
+        
+            NSLog(@"%@", lightBulbImageView);
+            UISlider *slider = (UISlider *)sender;
+            NSLog(@"slidervalue: %f", slider.value);
+            
+            CIImage *inputImage = [[CIImage alloc] initWithImage:lightBulbImageView.image];
+            CIFilter *temperatureAdjustment = [CIFilter filterWithName:@"CITemperatureAndTint"];
+            
+            [temperatureAdjustment setDefaults];
+            [temperatureAdjustment setValue:inputImage forKey:@"inputImage"];
+            [temperatureAdjustment setValue:[CIVector vectorWithX:6500 Y:0] forKey:@"inputNeutral"];
+            [temperatureAdjustment setValue:[CIVector vectorWithX:slider.value Y:0] forKey:@"inputTargetNeutral"];
+            
+            //CIImage *outputImage = [temperatureAdjustment valueForKey:@"outputImage"];
+            CIImage *outputImage = [temperatureAdjustment outputImage];
+        
+            CIContext *context = [CIContext contextWithOptions:nil];
+            
+            lightBulbImageView.image = [UIImage imageWithCGImage:[context createCGImage:outputImage fromRect:outputImage.extent]];;
+ 
+            
+        }
+
+        self.numberOfWarmSliderValueUpdates = 0;
+    }
+    
+    NSNumber *incrementNumber = [NSNumber numberWithInt:[self.numberOfWarmSliderValueUpdates intValue] + 1];
+    self.numberOfWarmSliderValueUpdates = incrementNumber;
+    
+}
+
+
+
+- (IBAction)coolSliderChangedValue:(id)sender {
+    
+    NSLog(@"Number Of Updates: %@", self.numberOfCoolSliderValueUpdates);
+    
+    if (self.numberOfCoolSliderValueUpdates.integerValue > 10) {
+        
+        for (UIImageView *lightBulbImageView in self.allLightImageViews) {
+            
+            //UIImageView *lightBulbImageView = [self.allLightImageViews firstObject];
+            
+            NSLog(@"%@", lightBulbImageView);
+            UISlider *slider = (UISlider *)sender;
+            NSLog(@"slidervalue: %f", slider.value);
+            
+            CIImage *inputImage = [[CIImage alloc] initWithImage:lightBulbImageView.image];
+            CIFilter *temperatureAdjustment = [CIFilter filterWithName:@"CITemperatureAndTint"];
+            
+            [temperatureAdjustment setDefaults];
+            [temperatureAdjustment setValue:inputImage forKey:@"inputImage"];
+            [temperatureAdjustment setValue:[CIVector vectorWithX:slider.value Y:0] forKey:@"inputNeutral"];
+            [temperatureAdjustment setValue:[CIVector vectorWithX:6500 Y:0] forKey:@"inputTargetNeutral"];
+            
+            //CIImage *outputImage = [temperatureAdjustment valueForKey:@"outputImage"];
+            CIImage *outputImage = [temperatureAdjustment outputImage];
+            
+            CIContext *context = [CIContext contextWithOptions:nil];
+            
+            lightBulbImageView.image = [UIImage imageWithCGImage:[context createCGImage:outputImage fromRect:outputImage.extent]];;
+            
+            
+        }
+        
+        self.numberOfCoolSliderValueUpdates = 0;
+    }
+    
+    NSNumber *incrementNumber = [NSNumber numberWithInt:[self.numberOfCoolSliderValueUpdates intValue] + 1];
+    self.numberOfCoolSliderValueUpdates = incrementNumber;
+    
+    
+}
 
 
 @end

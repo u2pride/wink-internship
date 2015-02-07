@@ -364,6 +364,9 @@
                         <subviews>
                             <slider opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="1Mi-2v-swr">
                                 <rect key="frame" x="25" y="306" width="274" height="31"/>
+                                <connections>
+                                    <action selector="warmSliderChangedValue:" destination="B3e-46-USh" eventType="valueChanged" id="nmU-CL-Gig"/>
+                                </connections>
                             </slider>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="llR-MD-4S1">
                                 <rect key="frame" x="110" y="200" width="30" height="30"/>
@@ -394,6 +397,9 @@
                             </label>
                             <slider opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="yv1-Tp-AAb">
                                 <rect key="frame" x="28" y="401" width="274" height="31"/>
+                                <connections>
+                                    <action selector="coolSliderChangedValue:" destination="B3e-46-USh" eventType="valueChanged" id="q5g-47-J8u"/>
+                                </connections>
                             </slider>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fJF-2A-eJ1">
                                 <rect key="frame" x="16" y="77" width="284" height="109"/>
@@ -440,6 +446,10 @@
                         </constraints>
                     </view>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
+                    <connections>
+                        <outlet property="coolSlider" destination="yv1-Tp-AAb" id="hVs-di-TNN"/>
+                        <outlet property="warmSlider" destination="1Mi-2v-swr" id="5Nl-u4-L85"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ut7-ak-8SC" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
