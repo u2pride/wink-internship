@@ -77,6 +77,20 @@
                                     <action selector="login:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="Fyn-2d-JIr"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="U9h-VT-kSF">
+                                <rect key="frame" x="45" y="485" width="230" height="45"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="230" id="NWj-M7-4Zw"/>
+                                    <constraint firstAttribute="height" constant="45" id="Q5u-Wl-4tC"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                                <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <state key="normal" title="Use Mock Server">
+                                    <color key="titleColor" red="0.0" green="0.72156862749999995" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
@@ -91,9 +105,11 @@
                             <constraint firstAttribute="centerX" secondItem="m7t-OH-OTN" secondAttribute="centerX" constant="-70" id="h7h-kl-uyb"/>
                             <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="KJp-e2-rU0" secondAttribute="bottom" constant="66" id="kWx-Kg-BWG"/>
                             <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="KJp-e2-rU0" secondAttribute="bottom" constant="121" id="q7c-Fu-hkt"/>
+                            <constraint firstItem="U9h-VT-kSF" firstAttribute="top" secondItem="KJp-e2-rU0" secondAttribute="bottom" constant="15" id="q8G-Ht-w1C"/>
                             <constraint firstItem="m7t-OH-OTN" firstAttribute="top" secondItem="sTp-SL-G1e" secondAttribute="bottom" constant="46" id="qFq-5r-ZDg"/>
                             <constraint firstAttribute="centerX" secondItem="WoT-1S-J86" secondAttribute="centerX" id="rQV-vl-Fmp"/>
                             <constraint firstItem="KJp-e2-rU0" firstAttribute="top" secondItem="m7t-OH-OTN" secondAttribute="bottom" constant="60" id="u0V-5O-VTY"/>
+                            <constraint firstAttribute="centerX" secondItem="U9h-VT-kSF" secondAttribute="centerX" id="uEp-7g-tSm"/>
                         </constraints>
                         <variation key="default">
                             <mask key="constraints">
@@ -105,6 +121,7 @@
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <connections>
                         <outlet property="loginButton" destination="KJp-e2-rU0" id="pTJ-P4-zJV"/>
+                        <outlet property="mockServerButton" destination="U9h-VT-kSF" id="rMk-8v-hq2"/>
                         <outlet property="passwordTextField" destination="m7t-OH-OTN" id="Hag-Xd-Q8P"/>
                         <outlet property="usernameTextField" destination="sTp-SL-G1e" id="yvq-yB-Vec"/>
                         <outlet property="winkImageView" destination="WoT-1S-J86" id="77L-KH-xYa"/>
@@ -362,72 +379,38 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <slider opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="1Mi-2v-swr">
-                                <rect key="frame" x="25" y="306" width="274" height="31"/>
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="1Mi-2v-swr">
+                                <rect key="frame" x="34" y="306" width="252" height="31"/>
                                 <connections>
                                     <action selector="warmSliderChangedValue:" destination="B3e-46-USh" eventType="valueChanged" id="nmU-CL-Gig"/>
                                 </connections>
                             </slider>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="llR-MD-4S1">
-                                <rect key="frame" x="110" y="200" width="30" height="30"/>
-                                <state key="normal" title="ON">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="startLightCorrection:" destination="B3e-46-USh" eventType="touchUpInside" id="t3z-6Z-q1Q"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bL8-UG-Nib">
-                                <rect key="frame" x="184" y="200" width="30" height="30"/>
-                                <state key="normal" title="OFF">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                            </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="Warmth During Heating" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="svS-g0-oJH">
-                                <rect key="frame" x="72" y="266" width="180" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Cool" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="64e-dV-PhL">
+                                <rect key="frame" x="142" y="366" width="36" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="Cool" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="64e-dV-PhL">
-                                <rect key="frame" x="144" y="366" width="36" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <slider opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="yv1-Tp-AAb">
-                                <rect key="frame" x="28" y="401" width="274" height="31"/>
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="yv1-Tp-AAb">
+                                <rect key="frame" x="34" y="401" width="252" height="31"/>
                                 <connections>
                                     <action selector="coolSliderChangedValue:" destination="B3e-46-USh" eventType="valueChanged" id="q5g-47-J8u"/>
                                 </connections>
                             </slider>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fJF-2A-eJ1">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Adjust your temperature effect." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fJF-2A-eJ1">
                                 <rect key="frame" x="16" y="77" width="284" height="109"/>
-                                <string key="text">Adjust how much the temperature of your lights changes when your thermostat is heating or cooling</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Less" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wRX-F9-pCf">
-                                <rect key="frame" x="16" y="344" width="36" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Warm" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="svS-g0-oJH">
+                                <rect key="frame" x="138" y="271" width="45" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Less" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zWX-3J-gU4">
-                                <rect key="frame" x="16" y="439" width="36" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="More" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zn7-ko-NXr">
-                                <rect key="frame" x="261" y="344" width="40" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="More" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6UH-NK-aKt">
-                                <rect key="frame" x="264" y="439" width="40" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Thermostat Status: off" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PdI-Bz-YYD">
+                                <rect key="frame" x="75" y="186" width="171" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
@@ -435,19 +418,44 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstAttribute="centerX" secondItem="yv1-Tp-AAb" secondAttribute="centerX" id="0Iw-Wd-3eb"/>
                             <constraint firstItem="1Mi-2v-swr" firstAttribute="leading" secondItem="tUk-Ex-scI" secondAttribute="leadingMargin" constant="20" id="171-dP-9sM"/>
+                            <constraint firstItem="1Mi-2v-swr" firstAttribute="leading" secondItem="tUk-Ex-scI" secondAttribute="leadingMargin" constant="20" id="5cG-fq-bJV"/>
+                            <constraint firstItem="svS-g0-oJH" firstAttribute="top" secondItem="PdI-Bz-YYD" secondAttribute="bottom" constant="64" id="6z5-Ya-mKg"/>
                             <constraint firstAttribute="centerX" secondItem="svS-g0-oJH" secondAttribute="centerX" id="Aqm-Hp-AnY"/>
                             <constraint firstAttribute="centerX" secondItem="64e-dV-PhL" secondAttribute="centerX" id="ECD-P6-m65"/>
+                            <constraint firstItem="1Mi-2v-swr" firstAttribute="top" secondItem="svS-g0-oJH" secondAttribute="bottom" constant="14" id="Jz3-sM-ueI"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="yv1-Tp-AAb" secondAttribute="trailing" constant="20" id="N9P-wv-JMr"/>
+                            <constraint firstItem="yv1-Tp-AAb" firstAttribute="leading" secondItem="tUk-Ex-scI" secondAttribute="leadingMargin" constant="20" id="P7f-0t-nHm"/>
                             <constraint firstAttribute="centerX" secondItem="yv1-Tp-AAb" secondAttribute="centerX" id="PFc-GF-hrj"/>
                             <constraint firstAttribute="trailingMargin" secondItem="yv1-Tp-AAb" secondAttribute="trailing" constant="20" id="Wez-8c-UE8"/>
+                            <constraint firstAttribute="centerX" secondItem="64e-dV-PhL" secondAttribute="centerX" id="a6m-zE-Mhy"/>
+                            <constraint firstItem="yv1-Tp-AAb" firstAttribute="top" secondItem="64e-dV-PhL" secondAttribute="bottom" constant="14" id="aaz-l2-gDk"/>
+                            <constraint firstAttribute="centerX" secondItem="svS-g0-oJH" secondAttribute="centerX" id="fIV-gw-cQX"/>
+                            <constraint firstAttribute="centerX" secondItem="PdI-Bz-YYD" secondAttribute="centerX" id="fwM-D9-Yjl"/>
+                            <constraint firstItem="64e-dV-PhL" firstAttribute="top" secondItem="1Mi-2v-swr" secondAttribute="bottom" constant="30" id="leO-7H-TMi"/>
                             <constraint firstAttribute="centerX" secondItem="1Mi-2v-swr" secondAttribute="centerX" id="rb4-hi-s9B"/>
+                            <constraint firstAttribute="centerX" secondItem="1Mi-2v-swr" secondAttribute="centerX" id="tdJ-wd-e5A"/>
                             <constraint firstItem="yv1-Tp-AAb" firstAttribute="leading" secondItem="tUk-Ex-scI" secondAttribute="leadingMargin" constant="20" id="ttj-fE-Kfw"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="1Mi-2v-swr" secondAttribute="trailing" constant="20" id="wq8-y3-uJz"/>
                             <constraint firstAttribute="trailingMargin" secondItem="1Mi-2v-swr" secondAttribute="trailing" constant="20" id="zal-gT-nut"/>
+                            <constraint firstItem="kav-4f-VjE" firstAttribute="top" secondItem="yv1-Tp-AAb" secondAttribute="bottom" constant="137" id="zlo-6Q-ulb"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="171-dP-9sM"/>
+                                <exclude reference="tdJ-wd-e5A"/>
+                                <exclude reference="zal-gT-nut"/>
+                                <exclude reference="0Iw-Wd-3eb"/>
+                                <exclude reference="N9P-wv-JMr"/>
+                                <exclude reference="P7f-0t-nHm"/>
+                            </mask>
+                        </variation>
                     </view>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <connections>
                         <outlet property="coolSlider" destination="yv1-Tp-AAb" id="hVs-di-TNN"/>
+                        <outlet property="thermostatStatusLabel" destination="PdI-Bz-YYD" id="vca-k4-Nbe"/>
                         <outlet property="warmSlider" destination="1Mi-2v-swr" id="5Nl-u4-L85"/>
                     </connections>
                 </viewController>
@@ -476,6 +484,6 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="Lky-hA-CZY"/>
+        <segue reference="HrH-wd-uhM"/>
     </inferredMetricsTieBreakers>
 </document>

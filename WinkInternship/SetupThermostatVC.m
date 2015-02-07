@@ -226,7 +226,12 @@ static NSString * const kLoggedIn = @"loggedinalready";
         
     }
     
-    self.resultTextLabel.text = [NSString stringWithFormat:@"Found %d thermostats", numberOfThermostats];
+    if (numberOfThermostats >= 1) {
+        self.resultTextLabel.text = [NSString stringWithFormat:@"Found a thermostat"];
+    } else {
+        self.resultTextLabel.text = [NSString stringWithFormat:@"No thermostats found"];
+    }
+        
     
 }
 

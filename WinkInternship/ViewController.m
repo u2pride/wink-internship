@@ -23,6 +23,7 @@ static NSString * const kLoggedIn = @"loggedinalready";
 @property (weak, nonatomic) IBOutlet UITextField *passwordTextField;
 @property (weak, nonatomic) IBOutlet UIImageView *winkImageView;
 @property (weak, nonatomic) IBOutlet UIButton *loginButton;
+@property (weak, nonatomic) IBOutlet UIButton *mockServerButton;
 
 
 - (IBAction)login:(id)sender;
@@ -32,7 +33,7 @@ static NSString * const kLoggedIn = @"loggedinalready";
 
 @implementation ViewController
 
-@synthesize usernameTextField, passwordTextField, winkImageView, loginButton;
+@synthesize usernameTextField, passwordTextField, winkImageView, loginButton, mockServerButton;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -55,7 +56,7 @@ static NSString * const kLoggedIn = @"loggedinalready";
     
     
     self.loginButton.layer.cornerRadius = 15;
-    
+    self.mockServerButton.layer.cornerRadius = 15;
     
 }
 
@@ -200,7 +201,9 @@ static NSString * const kLoggedIn = @"loggedinalready";
                                       
                                       [userDefaults synchronize];
                                       
-                                      [self performSegueWithIdentifier:@"loginToSetup" sender:self];
+                                      dispatch_async(dispatch_get_main_queue(), ^{
+                                          [self performSegueWithIdentifier:@"loginToSetup" sender:self];
+                                      });
                                       
                                   }];
     [task resume];
