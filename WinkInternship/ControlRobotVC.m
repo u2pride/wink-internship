@@ -17,13 +17,21 @@ static NSString * const kUsername = @"usernamekey";
 static NSString * const kPassword = @"passwordkey";
 static NSString * const kLoggedIn = @"loggedinalready";
 
+@interface ControlRobotVC ()
+
+@property (nonatomic, strong) NSMutableArray *activeLightsForTemperatureEffect;
+
+@end
+
 @implementation ControlRobotVC
 
-@synthesize userLights;
+@synthesize userLights, activeLightsForTemperatureEffect;
 
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+    
+    self.activeLightsForTemperatureEffect = [[NSMutableArray alloc] init];
     
     NSArray *allLights = self.userLights;
     
@@ -42,20 +50,86 @@ static NSString * const kLoggedIn = @"loggedinalready";
     
     //Each Light Found in the Previous Step is Represented with an Light Bulb Image
     
-    CGRect initialFrame = CGRectMake(20, 300, 100, 100);
+    CGRect initialFrame = CGRectMake(20, self.view.frame.size.height - 120, 100, 100);
     
     for (LightInWink *light in self.userLights) {
-        UIImageView *lightImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"BulbLit"]];
+        UIImageView *lightImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"BulbOff"]];
         lightImageView.frame = initialFrame;
         //used to identify the lightImageView
         lightImageView.tag = [light.lightID intValue];
         //update the frame
         initialFrame.origin.x +=100;
+        //add a tap gesture Recognizer
+        lightImageView.userInteractionEnabled = YES;
+        UITapGestureRecognizer *tapLight = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(enableDisableLight:)];
+        [lightImageView addGestureRecognizer:tapLight];
+        //add to view
         [self.view addSubview:lightImageView];
         
     }
     
 
+    
+}
+
+
+- (void)enableDisableLight:(UITapGestureRecognizer *)tapgr {
+    UIImageView *tappedImage = (UIImageView *)tapgr.view;
+
+    long lightID = (long)tappedImage.tag;
+    NSLog(@"LightID: %ld", (long)tappedImage.tag);
+    
+    BOOL foundLightID = false;
+    
+    for (int i = 0; i < self.activeLightsForTemperatureEffect.count; i++) {
+        
+        long lightIDOfActiveLights = [self.activeLightsForTemperatureEffect[i] floatValue];
+        if (lightIDOfActiveLights == lightID) {
+            foundLightID = true;
+        }
+        
+    }
+    
+    
+    if (foundLightID) {
+        NSLog(@"Turn bulb off");
+        tappedImage.image = [UIImage imageNamed:@"BulbOff"];
+        [self.activeLightsForTemperatureEffect removeObject:[NSNumber numberWithFloat:lightID]];
+    } else {
+        NSLog(@"Turn bulb on");
+        tappedImage.image = [UIImage imageNamed:@"BulbLit"];
+        [self.activeLightsForTemperatureEffect addObject:[NSNumber numberWithFloat:lightID]];
+    }
+    
+    NSLog(@"Current Active Lights = %@", self.activeLightsForTemperatureEffect);
+
+    
+    /*
+    if (tappedImage.image == [UIImage imageNamed:@"BulbLit"]) {
+        NSLog(@"Turn bulb off");
+        tappedImage.image = [UIImage imageNamed:@"BulbOff"];
+        [self.activeLightsForTemperatureEffect removeObject:[NSNumber numberWithInteger:lightID]];
+    } else {
+        NSLog(@"Turn bulb on");
+        tappedImage.image = [UIImage imageNamed:@"BulbLit"];
+        [self.activeLightsForTemperatureEffect addObject:[NSNumber numberWithInteger:lightID]];
+    }
+    
+    NSLog(@"Current Active Lights = %@", self.activeLightsForTemperatureEffect);
+    */
+    
+    
+    /*
+     //Remove old tap gesture recognizers
+     for (UIGestureRecognizer *gr in tappedIconView.gestureRecognizers) {
+     [tappedIconView removeGestureRecognizer:gr];
+     }
+     
+     //Add back a gesture recognizer for unfollow user
+     UITapGestureRecognizer *tapUnFollow = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(unFollowUser:)];
+     [tappedIconView addGestureRecognizer:tapUnFollow];
+     
+     */
     
 }
 
