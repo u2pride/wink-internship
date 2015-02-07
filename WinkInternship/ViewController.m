@@ -22,6 +22,7 @@ static NSString * const kLoggedIn = @"loggedinalready";
 @property (weak, nonatomic) IBOutlet UITextField *usernameTextField;
 @property (weak, nonatomic) IBOutlet UITextField *passwordTextField;
 @property (weak, nonatomic) IBOutlet UIImageView *winkImageView;
+@property (weak, nonatomic) IBOutlet UIButton *loginButton;
 
 
 - (IBAction)login:(id)sender;
@@ -31,7 +32,7 @@ static NSString * const kLoggedIn = @"loggedinalready";
 
 @implementation ViewController
 
-@synthesize usernameTextField, passwordTextField, winkImageView;
+@synthesize usernameTextField, passwordTextField, winkImageView, loginButton;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -52,6 +53,8 @@ static NSString * const kLoggedIn = @"loggedinalready";
     self.passwordTextField.delegate = self;
     self.usernameTextField.delegate = self;
     
+    
+    self.loginButton.layer.cornerRadius = 15;
     
     
 }

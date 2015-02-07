@@ -23,19 +23,20 @@ static NSString * const kLoggedIn = @"loggedinalready";
 
 @property (weak, nonatomic) IBOutlet UITableView *lightBrandsTable;
 @property (weak, nonatomic) IBOutlet UIButton *nextButton;
-@property (weak, nonatomic) IBOutlet UILabel *resultsTextLabel;
+@property (weak, nonatomic) IBOutlet UILabel *lightsTextLabel;
 
 @property (nonatomic, strong) NSMutableArray *lightBrands;
 
 @property (nonatomic, strong) NSMutableArray *lightsFound;
 @property (nonatomic, strong) NSMutableArray *selectedLights;
+@property (nonatomic, strong) NSIndexPath *indexPathSelected;
 
 
 @end
 
 @implementation SetupLightsVC
 
-@synthesize lightBrands, lightBrandsTable, nextButton, lightsFound, selectedLights, selectedThermostats, resultsTextLabel;
+@synthesize lightBrands, lightBrandsTable, nextButton, lightsFound, selectedLights, selectedThermostats, lightsTextLabel, indexPathSelected;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -43,7 +44,7 @@ static NSString * const kLoggedIn = @"loggedinalready";
     self.lightsFound = [[NSMutableArray alloc] init];
     self.selectedLights = [[NSMutableArray alloc] init];
     
-    self.resultsTextLabel.text = @"Select a Brand";
+    self.lightsTextLabel.text = @"Select A Brand";
     
     //Create Brand Objects
     self.lightBrands = [[NSMutableArray alloc] init];
@@ -99,9 +100,19 @@ static NSString * const kLoggedIn = @"loggedinalready";
 // When the next button is pressed, the 'selectedLights' are sent to the Control View to be used.
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    //Selected Brand
-    BrandOfWink *selectedBrand = [self.lightBrands objectAtIndex:indexPath.row];
-    NSString *manufacturer = selectedBrand.manufacturerName;
+    
+    BrandTableCellForLights *currentCell = (BrandTableCellForLights *)[tableView cellForRowAtIndexPath:indexPath];
+    
+    if (self.indexPathSelected) {
+        BrandTableCellForLights *previousSelection = (BrandTableCellForLights *)[tableView cellForRowAtIndexPath:self.indexPathSelected];
+        previousSelection.accessoryType = UITableViewCellAccessoryNone;
+    }
+    
+    currentCell.accessoryType = UITableViewCellAccessoryCheckmark;
+    self.indexPathSelected = indexPath;
+    
+    //Refresh SelectedLights
+    //self.selectedLights = nil;
     
     //Grab the tokens
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
@@ -136,39 +147,68 @@ static NSString * const kLoggedIn = @"loggedinalready";
                                           NSLog(@"Response HTTP Headers:\n%@\n", [(NSHTTPURLResponse *)response allHeaderFields]);
                                       }
                                       
-                                      //TODO = push out to a separate function
-                                      
                                       NSString* body = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
                                       NSLog(@"Response Body:\n%@\n", body);
                                       
-                                      NSError *errorJSON;
-                                      NSMutableDictionary *allDevices = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&errorJSON];
+                                      dispatch_async(dispatch_get_main_queue(), ^{
+                                          [self resultsFromRequest:data];
+                                      });
                                       
-                                      NSArray *allLights = [allDevices objectForKey:@"data"];
                                       
-                                      for (NSDictionary *light in allLights) {
-                                          
-                                          NSLog(@"light ID: %@", light[@"light_bulb_id"]);
-                                          NSLog(@"device manu: %@", light[@"device_manufacturer"]);
-                                          
-                                          LightInWink *newLight = [[LightInWink alloc] initWithLightID:light[@"light_bulb_id"] withLightName:light[@"name"] withManufacturer:light[@"device_manufacturer"]];
-                                          
-                                          
-                                          NSLog(@"First: %@ and Second: %@", newLight.lightManufacturer, manufacturer);
-                                          
-                                          if ([newLight.lightManufacturer isEqualToString:manufacturer]) {
-                                              [self.selectedLights addObject:newLight];
-                                          }
-                                          
-                                          [self.lightsFound addObject:newLight];
-                                          
-                                      }
                                       
                                   }];
     [task resume];
     
+
+    
     
 }
+
+- (void)resultsFromRequest:(NSData *)data {
+    
+    NSLog(@"Results here");
+    
+    NSError *errorJSON;
+    NSMutableDictionary *allDevices = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&errorJSON];
+    
+    NSArray *allLights = [allDevices objectForKey:@"data"];
+    
+    int numberOfLights = 0;
+    
+    [self.selectedLights removeAllObjects];
+    
+    NSIndexPath *selectedPath = [self.lightBrandsTable indexPathForSelectedRow];
+    BrandOfWink *selectedBrand = [self.lightBrands objectAtIndex:selectedPath.row];
+    
+    NSString *manufacturer = selectedBrand.manufacturerName;
+    
+    for (NSDictionary *light in allLights) {
+        
+        NSLog(@"light ID: %@", light[@"light_bulb_id"]);
+        NSLog(@"device manu: %@", light[@"device_manufacturer"]);
+        
+        LightInWink *newLight = [[LightInWink alloc] initWithLightID:light[@"light_bulb_id"] withLightName:light[@"name"] withManufacturer:light[@"device_manufacturer"]];
+        
+        
+        NSLog(@"First: %@ and Second: %@", newLight.lightManufacturer, manufacturer);
+        
+        if ([newLight.lightManufacturer isEqualToString:manufacturer]) {
+            numberOfLights += 1;
+            NSLog(@"HEY THERE");
+            [self.selectedLights addObject:newLight];
+        }
+        
+        [self.lightsFound addObject:newLight];
+        
+        
+    }
+    
+    self.lightsTextLabel.text = [NSString stringWithFormat:@"Found %d lights", numberOfLights];
+
+
+}
+
+
 
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
@@ -178,7 +218,7 @@ static NSString * const kLoggedIn = @"loggedinalready";
     controlViewController.userLights = self.selectedLights;
     controlViewController.userThermostats = self.selectedThermostats;
     
-    self.navigationItem.backBarButtonItem=[[UIBarButtonItem alloc] initWithTitle:@" " style:UIBarButtonItemStylePlain target:nil action:nil];
+    //self.navigationItem.backBarButtonItem=[[UIBarButtonItem alloc] initWithTitle:@" " style:UIBarButtonItemStylePlain target:nil action:nil];
 
     
 }
@@ -196,8 +236,36 @@ static NSString * const kLoggedIn = @"loggedinalready";
 
 
 
+/*
++ (NSURLSessionDataTask *)fromURL:(NSString *)url completionHandler:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completionHandler {
+    
+    
+    NSURL *urlForRequest = [NSURL URLWithString:url];
+    NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:urlForRequest];
+    
+    //Grab the tokens
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    NSString *accessToken = [userDefaults objectForKey:kAccessToken];
+    NSString *valueForHTTPHeader = [NSString stringWithFormat:@"Bearer %@", accessToken];
+    
+    
+    [urlRequest setHTTPMethod:@"GET"];
+    [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    [urlRequest setValue:valueForHTTPHeader forHTTPHeaderField:@"Authorization"];
 
+    NSURLSession *session = [NSURLSession sharedSession];
 
+    NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:urlRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        if (completionHandler)
+            completionHandler(data, response, error);
+    }];
+    
+    [dataTask resume];
+    
+    return dataTask;
+}
+
+*/
 
 
 

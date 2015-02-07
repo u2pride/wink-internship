@@ -30,14 +30,14 @@ static NSString * const kLoggedIn = @"loggedinalready";
 
 @property (nonatomic, strong) NSMutableArray *allThermostats;
 @property (nonatomic, strong) NSMutableArray *selectedThermostats;
-
+@property (nonatomic, strong) NSIndexPath *indexPathSelected;
 
 
 @end
 
 @implementation SetupThermostatVC
 
-@synthesize thermostatTable, nextButton, resultTextLabel;
+@synthesize thermostatTable, nextButton, resultTextLabel, indexPathSelected;
 
 
 - (void)viewDidLoad {
@@ -46,6 +46,9 @@ static NSString * const kLoggedIn = @"loggedinalready";
     //initialize arrays
     self.allThermostats = [[NSMutableArray alloc] init];
     self.selectedThermostats = [[NSMutableArray alloc] init];
+    
+    //self.indexPathSelected = [[NSIndexPath alloc] init];
+    //self.indexPathSelected = nil;
     
     //Results Text label
     self.resultTextLabel.text = @"Select a Brand";
@@ -109,10 +112,13 @@ static NSString * const kLoggedIn = @"loggedinalready";
     
     BrandTableCell *currentCell = (BrandTableCell *)[tableView cellForRowAtIndexPath:indexPath];
     
-    currentCell.accessoryType = UITableViewCellAccessoryCheckmark;
+    if (self.indexPathSelected) {
+        BrandTableCell *previousSelection = (BrandTableCell *)[tableView cellForRowAtIndexPath:self.indexPathSelected];
+        previousSelection.accessoryType = UITableViewCellAccessoryNone;
+    }
     
-    BrandOfWink *selectedBrand = [self.thermostatBrands objectAtIndex:indexPath.row];
-    NSString *manufacturer = selectedBrand.manufacturerName;
+    currentCell.accessoryType = UITableViewCellAccessoryCheckmark;
+    self.indexPathSelected = indexPath;
     
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     NSString *accessToken = [userDefaults objectForKey:kAccessToken];
@@ -153,28 +159,9 @@ static NSString * const kLoggedIn = @"loggedinalready";
                                       NSString* body = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
                                       NSLog(@"Response Body:\n%@\n", body);
                                       
-                                      
-                                      NSError *errorJSON;
-                                      NSMutableDictionary *allThermostats = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&errorJSON];
-                                      
-                                      NSArray *thermostats = [allThermostats objectForKey:@"data"];
-                                      
-                                      for (NSDictionary *thermostat in thermostats) {
-                                          
-                                          ThermostatInWink *newThermostat = [[ThermostatInWink alloc] initWithThermostatID:thermostat[@"thermostat_id"] withName:thermostat[@"name"] withManufacturer:thermostat[@"device_manufacturer"]];
-                                          
-                                          
-                                          [self.allThermostats addObject:newThermostat];
-                                          
-                                          
-                                          if ([newThermostat.thermostatManufacturer isEqualToString:manufacturer]) {
-                                              
-                                              [self.selectedThermostats addObject:newThermostat];
-                                          }
-
-                                      }
-                                      
-                                      self.resultTextLabel.text = [NSString stringWithFormat:@"Found %lu Thermostats", (unsigned long)self.selectedThermostats.count];
+                                      dispatch_async(dispatch_get_main_queue(), ^{
+                                          [self resultsFromRequest:data];
+                                      });
                                       
                                       
                                   }];
@@ -209,6 +196,39 @@ static NSString * const kLoggedIn = @"loggedinalready";
     */
 }
 
+
+- (void)resultsFromRequest:(NSData *)data {
+    
+    NSIndexPath *selectedPath = [self.thermostatTable indexPathForSelectedRow];
+    BrandOfWink *selectedBrand = [self.thermostatBrands objectAtIndex:selectedPath.row];
+    
+    NSString *manufacturer = selectedBrand.manufacturerName;
+    
+    NSError *errorJSON;
+    NSMutableDictionary *allThermostats = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&errorJSON];
+    
+    NSArray *thermostats = [allThermostats objectForKey:@"data"];
+    
+    int numberOfThermostats = 0;
+
+    for (NSDictionary *thermostat in thermostats) {
+        
+        ThermostatInWink *newThermostat = [[ThermostatInWink alloc] initWithThermostatID:thermostat[@"thermostat_id"] withName:thermostat[@"name"] withManufacturer:thermostat[@"device_manufacturer"]];
+        
+        
+        [self.allThermostats addObject:newThermostat];
+        
+        
+        if ([newThermostat.thermostatManufacturer isEqualToString:manufacturer]) {
+            numberOfThermostats += 1;
+            [self.selectedThermostats addObject:newThermostat];
+        }
+        
+    }
+    
+    self.resultTextLabel.text = [NSString stringWithFormat:@"Found %d thermostats", numberOfThermostats];
+    
+}
 
 #pragma mark - Navigation
 

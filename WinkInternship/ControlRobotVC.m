@@ -9,6 +9,7 @@
 #import "ControlRobotVC.h"
 #import "LightInWink.h"
 
+
 static NSString * const BaseAPIString = @"https://winkapi.quirky.com/";
 static NSString * const kAccessToken = @"access_token";
 static NSString * const kRefreshToken = @"refresh_token";
@@ -39,6 +40,21 @@ static NSString * const kLoggedIn = @"loggedinalready";
     self.navigationItem.leftBarButtonItem.title = @"";
 
     
+    //Each Light Found in the Previous Step is Represented with an Light Bulb Image
+    
+    CGRect initialFrame = CGRectMake(20, 300, 100, 100);
+    
+    for (LightInWink *light in self.userLights) {
+        UIImageView *lightImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"BulbLit"]];
+        lightImageView.frame = initialFrame;
+        //used to identify the lightImageView
+        lightImageView.tag = [light.lightID intValue];
+        //update the frame
+        initialFrame.origin.x +=100;
+        [self.view addSubview:lightImageView];
+        
+    }
+    
 
     
 }
@@ -59,15 +75,13 @@ static NSString * const kLoggedIn = @"loggedinalready";
     NSURL *url = [NSURL URLWithString:stringForURL];
     NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:url];
     
-    [urlRequest setHTTPMethod:@"GET"];
+    [urlRequest setHTTPMethod:@"PUT"];
     [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     [urlRequest setValue:valueForHTTPHeader forHTTPHeaderField:@"Authorization"];
     
 
-
-    
     NSDictionary* info = [NSDictionary dictionaryWithObjectsAndKeys:
-                          @"true",
+                          [NSNumber numberWithBool:true],
                           @"powered",
                           [NSNumber numberWithFloat:1.0],
                           @"brightness",
