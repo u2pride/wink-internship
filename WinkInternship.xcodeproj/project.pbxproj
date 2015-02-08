@@ -15,7 +15,7 @@
 		A41E16951A82FC630080DD7A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = A41E16931A82FC630080DD7A /* LaunchScreen.xib */; };
 		A41E16A11A82FC640080DD7A /* WinkInternshipTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A41E16A01A82FC640080DD7A /* WinkInternshipTests.m */; };
 		A4315F591A83BFA200CA6FEB /* SetupThermostatVC.m in Sources */ = {isa = PBXBuildFile; fileRef = A4315F581A83BFA200CA6FEB /* SetupThermostatVC.m */; };
-		A4315F5C1A83C31A00CA6FEB /* BrandTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A4315F5B1A83C31A00CA6FEB /* BrandTableCell.m */; };
+		A4315F5C1A83C31A00CA6FEB /* BrandTableCellForThermometers.m in Sources */ = {isa = PBXBuildFile; fileRef = A4315F5B1A83C31A00CA6FEB /* BrandTableCellForThermometers.m */; };
 		A4315F5F1A83C37D00CA6FEB /* BrandOfWink.m in Sources */ = {isa = PBXBuildFile; fileRef = A4315F5E1A83C37D00CA6FEB /* BrandOfWink.m */; };
 		A4315F621A83CD7200CA6FEB /* BrandTableCellForLights.m in Sources */ = {isa = PBXBuildFile; fileRef = A4315F611A83CD7200CA6FEB /* BrandTableCellForLights.m */; };
 		A4315F651A83CDE300CA6FEB /* SetupLightsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = A4315F641A83CDE300CA6FEB /* SetupLightsVC.m */; };
@@ -51,8 +51,8 @@
 		A41E16A01A82FC640080DD7A /* WinkInternshipTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WinkInternshipTests.m; sourceTree = "<group>"; };
 		A4315F571A83BFA200CA6FEB /* SetupThermostatVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetupThermostatVC.h; sourceTree = "<group>"; };
 		A4315F581A83BFA200CA6FEB /* SetupThermostatVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SetupThermostatVC.m; sourceTree = "<group>"; };
-		A4315F5A1A83C31A00CA6FEB /* BrandTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BrandTableCell.h; sourceTree = "<group>"; };
-		A4315F5B1A83C31A00CA6FEB /* BrandTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BrandTableCell.m; sourceTree = "<group>"; };
+		A4315F5A1A83C31A00CA6FEB /* BrandTableCellForThermometers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BrandTableCellForThermometers.h; sourceTree = "<group>"; };
+		A4315F5B1A83C31A00CA6FEB /* BrandTableCellForThermometers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BrandTableCellForThermometers.m; sourceTree = "<group>"; };
 		A4315F5D1A83C37D00CA6FEB /* BrandOfWink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BrandOfWink.h; sourceTree = "<group>"; };
 		A4315F5E1A83C37D00CA6FEB /* BrandOfWink.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BrandOfWink.m; sourceTree = "<group>"; };
 		A4315F601A83CD7200CA6FEB /* BrandTableCellForLights.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BrandTableCellForLights.h; sourceTree = "<group>"; };
@@ -121,7 +121,6 @@
 				A4672A051A8521E7004AF518 /* Models */,
 				A4E733791A84027000B3C70A /* Setup Controllers */,
 				A4E7337A1A84029300B3C70A /* Main Controllers */,
-				A4E7337B1A8402A100B3C70A /* Custom Table Cells */,
 				A41E16911A82FC630080DD7A /* Images.xcassets */,
 				A41E16931A82FC630080DD7A /* LaunchScreen.xib */,
 				A41E16841A82FC630080DD7A /* Supporting Files */,
@@ -181,6 +180,7 @@
 				A4315F581A83BFA200CA6FEB /* SetupThermostatVC.m */,
 				A4315F631A83CDE300CA6FEB /* SetupLightsVC.h */,
 				A4315F641A83CDE300CA6FEB /* SetupLightsVC.m */,
+				A4E7337B1A8402A100B3C70A /* Custom Table Cells */,
 			);
 			name = "Setup Controllers";
 			sourceTree = "<group>";
@@ -199,8 +199,8 @@
 			children = (
 				A4315F601A83CD7200CA6FEB /* BrandTableCellForLights.h */,
 				A4315F611A83CD7200CA6FEB /* BrandTableCellForLights.m */,
-				A4315F5A1A83C31A00CA6FEB /* BrandTableCell.h */,
-				A4315F5B1A83C31A00CA6FEB /* BrandTableCell.m */,
+				A4315F5A1A83C31A00CA6FEB /* BrandTableCellForThermometers.h */,
+				A4315F5B1A83C31A00CA6FEB /* BrandTableCellForThermometers.m */,
 			);
 			name = "Custom Table Cells";
 			sourceTree = "<group>";
@@ -309,7 +309,7 @@
 				A4315F681A83D4D500CA6FEB /* ControlRobotVC.m in Sources */,
 				A4672A041A8521DE004AF518 /* ThermostatInWink.m in Sources */,
 				A4315F5F1A83C37D00CA6FEB /* BrandOfWink.m in Sources */,
-				A4315F5C1A83C31A00CA6FEB /* BrandTableCell.m in Sources */,
+				A4315F5C1A83C31A00CA6FEB /* BrandTableCellForThermometers.m in Sources */,
 				A4315F621A83CD7200CA6FEB /* BrandTableCellForLights.m in Sources */,
 				A41E168A1A82FC630080DD7A /* AppDelegate.m in Sources */,
 				A41E16871A82FC630080DD7A /* main.m in Sources */,

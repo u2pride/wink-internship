@@ -31,14 +31,16 @@ static NSString * const kClientSecret = @"d7d606469be78ac2a3fce4e5419ab4f1";
 
 @end
 
+
+
 @implementation LoginVC
 
 @synthesize usernameTextField, passwordTextField, winkImageView, loginButton;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
-    
+
+    //Check to see if user is already logged in.
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     NSString *loggedIn = [userDefaults objectForKey:kLoggedIn];
     if ([loggedIn isEqualToString:@"yes"]) {
@@ -48,18 +50,15 @@ static NSString * const kClientSecret = @"d7d606469be78ac2a3fce4e5419ab4f1";
     
     //Setup View
     self.view.backgroundColor = [UIColor colorWithRed:0 green:0.722 blue:0.945 alpha:1];
-
     self.winkImageView.image = [UIImage imageNamed:@"WinkLogo"];
-    
     self.passwordTextField.delegate = self;
     self.usernameTextField.delegate = self;
-    
-    
     self.loginButton.layer.cornerRadius = 15;
     
 }
 
 
+// Method Fired When Login Button is Pressed
 - (IBAction)login:(id)sender {
     
     NSString *username = self.usernameTextField.text;
@@ -74,15 +73,17 @@ static NSString * const kClientSecret = @"d7d606469be78ac2a3fce4e5419ab4f1";
     [userDefaults synchronize];
     
     
+    //Create Strings for API Request
     NSString *httpBodyString = [NSString stringWithFormat:@"{\n    \"client_id\": \"%@\",\n    \"client_secret\": \"%@\",\n    \"username\": \"%@\",\n    \"password\": \"%@\",\n    \"grant_type\": \"password\"\n}", kClientID, kClientSecret, username, password];
     
-    NSURL *URL = [NSURL URLWithString:@"https://winkapi.quirky.com/oauth2/token"];
+    NSString *urlString = [NSString stringWithFormat:@"%@/oauth2/token", BaseAPIString];
     
+    //Creating and Starting Request
+    NSURL *URL = [NSURL URLWithString:urlString];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
+    
     [request setHTTPMethod:@"POST"];
-    
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    
     [request setHTTPBody:[httpBodyString dataUsingEncoding:NSUTF8StringEncoding]];
     
     NSURLSession *session = [NSURLSession sharedSession];
@@ -91,39 +92,44 @@ static NSString * const kClientSecret = @"d7d606469be78ac2a3fce4e5419ab4f1";
                                   ^(NSData *data, NSURLResponse *response, NSError *error) {
                                       
                                       if (error) {
-                                          // Handle error...
+                                          NSLog(@"Error: %@", error);
                                           return;
+                                      } else {
+                                          
+                                          if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+                                              NSLog(@"Response HTTP Status code: %ld\n", (long)[(NSHTTPURLResponse *)response statusCode]);
+                                              NSLog(@"Response HTTP Headers:\n%@\n", [(NSHTTPURLResponse *)response allHeaderFields]);
+                                          }
+                                          
+                                          NSString* body = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+                                          NSLog(@"Response Body:\n%@\n", body);
+                                          
+                                          NSError *errorJSON;
+                                          NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&errorJSON];
+                                          
+                                          //Extract Tokens from Response
+                                          NSString *accessToken = [json objectForKey:@"access_token"];
+                                          NSLog(@"Access Token: %@", accessToken);
+                                          
+                                          NSString *refreshToken = [json objectForKey:@"refresh_token"];
+                                          NSLog(@"Refresh Token: %@", refreshToken);
+                                          
+                                          //Store Tokens to User Preferences
+                                          NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+                                          
+                                          [userDefaults setObject:accessToken forKey:kAccessToken];
+                                          [userDefaults setObject:refreshToken forKey:kRefreshToken];
+                                          [userDefaults setObject:@"yes" forKey:kLoggedIn];
+                                          
+                                          [userDefaults synchronize];
+                                          
+                                          dispatch_async(dispatch_get_main_queue(), ^{
+                                              [self performSegueWithIdentifier:@"loginToSetup" sender:self];
+                                          });
+
+                                          
                                       }
                                       
-                                      if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-                                          NSLog(@"Response HTTP Status code: %ld\n", (long)[(NSHTTPURLResponse *)response statusCode]);
-                                          NSLog(@"Response HTTP Headers:\n%@\n", [(NSHTTPURLResponse *)response allHeaderFields]);
-                                      }
-                                      
-                                      NSString* body = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-                                      NSLog(@"Response Body:\n%@\n", body);
-                                      
-                                      NSError *error2;
-                                      NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error2];
-                                      
-                                      NSString *accessToken = [json objectForKey:@"access_token"];
-                                      NSLog(@"Access Token: %@", accessToken);
-                                      
-                                      NSString *refreshToken = [json objectForKey:@"refresh_token"];
-                                      NSLog(@"Refresh Token: %@", refreshToken);
-                                      
-                                      //Store Tokens to User Preferences
-                                      NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-                                      
-                                      [userDefaults setObject:accessToken forKey:kAccessToken];
-                                      [userDefaults setObject:refreshToken forKey:kRefreshToken];
-                                      [userDefaults setObject:@"yes" forKey:kLoggedIn];
-                                      
-                                      [userDefaults synchronize];
-                                      
-                                      dispatch_async(dispatch_get_main_queue(), ^{
-                                          [self performSegueWithIdentifier:@"loginToSetup" sender:self];
-                                      });
                                       
                                   }];
     [task resume];
@@ -132,7 +138,6 @@ static NSString * const kClientSecret = @"d7d606469be78ac2a3fce4e5419ab4f1";
 
 
 }
-
 
 #pragma mark - UITextFieldDelegate
 
@@ -208,6 +213,7 @@ static NSString * const kClientSecret = @"d7d606469be78ac2a3fce4e5419ab4f1";
 
 //[request setHTTPBody:[@"{\n    \"client_id\": \"2ec4f93efd4390a33f6b8dcb12875377\",\n    \"client_secret\": \"d7d606469be78ac2a3fce4e5419ab4f1\",\n    \"username\": \"thomas.alexander.ryan@gmail.com\",\n    \"password\": \"1Wink2\",\n    \"grant_type\": \"password\"\n}" dataUsingEncoding:NSUTF8StringEncoding]];
 
+//NSURL *URL = [NSURL URLWithString:@"https://winkapi.quirky.com/oauth2/token"];
 
 
 @end

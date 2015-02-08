@@ -10,7 +10,7 @@
 
 @interface SetupLightsVC : UIViewController <UITableViewDataSource, UITableViewDelegate>
 
+//Thermostats Selected From Preview View Controller
 @property (nonatomic, strong) NSMutableArray *selectedThermostats;
-
 
 @end

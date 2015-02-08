@@ -6,9 +6,9 @@
 //  Copyright (c) 2015 U2PrideLabs. All rights reserved.
 //
 
-#import "BrandTableCell.h"
+#import "BrandTableCellForThermometers.h"
 
-@implementation BrandTableCell
+@implementation BrandTableCellForThermometers
 
 @synthesize brandImageView;
 

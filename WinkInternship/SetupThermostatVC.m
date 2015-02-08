@@ -7,18 +7,15 @@
 //
 
 #import "BrandOfWink.h"
-#import "BrandTableCell.h"
+#import "BrandTableCellForThermometers.h"
+#import "SetupLightsVC.h"
 #import "SetupThermostatVC.h"
 #import "ThermostatInWink.h"
 #import <CoreImage/CoreImage.h>
-#import "SetupLightsVC.h"
 
 static NSString * const BaseAPIString = @"https://winkapi.quirky.com/";
 static NSString * const kAccessToken = @"access_token";
 static NSString * const kRefreshToken = @"refresh_token";
-static NSString * const kUsername = @"usernamekey";
-static NSString * const kPassword = @"passwordkey";
-static NSString * const kLoggedIn = @"loggedinalready";
 
 @interface SetupThermostatVC ()
 
@@ -37,7 +34,7 @@ static NSString * const kLoggedIn = @"loggedinalready";
 
 @implementation SetupThermostatVC
 
-@synthesize thermostatTable, nextButton, resultTextLabel, indexPathSelected;
+@synthesize thermostatTable, nextButton, resultTextLabel, thermostatBrands, allThermostats, selectedThermostats, indexPathSelected;
 
 
 - (void)viewDidLoad {
@@ -46,16 +43,9 @@ static NSString * const kLoggedIn = @"loggedinalready";
     //initialize arrays
     self.allThermostats = [[NSMutableArray alloc] init];
     self.selectedThermostats = [[NSMutableArray alloc] init];
-    
-    //self.indexPathSelected = [[NSIndexPath alloc] init];
-    //self.indexPathSelected = nil;
-    
-    //Results Text label
-    self.resultTextLabel.text = @"Select a Brand";
-    
-    //Create Brand Objects
     self.thermostatBrands = [[NSMutableArray alloc] init];
-    
+
+    //Create Brand Objects
     BrandOfWink *nest = [[BrandOfWink alloc] initWithBrandName:@"Nest" withBrandImage:[UIImage imageNamed:@"Nest"] withManufacturer:@"nest"];
     BrandOfWink *quirky = [[BrandOfWink alloc] initWithBrandName:@"Quirky" withBrandImage:[UIImage imageNamed:@"Quirky"] withManufacturer:@"quirky"];
     BrandOfWink *honeywell = [[BrandOfWink alloc] initWithBrandName:@"Honeywell" withBrandImage:[UIImage imageNamed:@"Honeywell"] withManufacturer:@"honeywell"];
@@ -65,9 +55,9 @@ static NSString * const kLoggedIn = @"loggedinalready";
     [self.thermostatBrands addObject:honeywell];
     
     
-    //Adjustments to Navigation Bar
+    //Adjustments to Navigation Bar - Same Navigation Bar is used throughout the App, So Adjustments Only Needed Here
     [self.navigationItem setTitle:@"Setup Thermostat"];
-    self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:0 green:0.722 blue:0.945 alpha:1]; /*#00b8f1*/
+    self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:0 green:0.722 blue:0.945 alpha:1];
     
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
     [self.navigationController.navigationBar
@@ -81,6 +71,8 @@ static NSString * const kLoggedIn = @"loggedinalready";
     self.nextButton.layer.cornerRadius = 15;
     self.nextButton.titleLabel.text = @"Next";
     self.nextButton.backgroundColor = [UIColor colorWithRed:0 green:0.722 blue:0.945 alpha:1];
+    self.resultTextLabel.text = @"Select a Brand";
+
 }
 
 
@@ -91,7 +83,7 @@ static NSString * const kLoggedIn = @"loggedinalready";
     
     NSString *stringIdentifier = @"BrandCell";
     
-    BrandTableCell *brandCell = [tableView dequeueReusableCellWithIdentifier:stringIdentifier forIndexPath:indexPath];
+    BrandTableCellForThermometers *brandCell = [tableView dequeueReusableCellWithIdentifier:stringIdentifier forIndexPath:indexPath];
     
     BrandOfWink *currentBrand = [self.thermostatBrands objectAtIndex:indexPath.row];
     
@@ -108,12 +100,18 @@ static NSString * const kLoggedIn = @"loggedinalready";
     
 }
 
+
+// Method Description
+// Upon selecting a row, the app grabs the stored tokens and calls the api for all of the thermostats owned by the user.
+// Once the thermostats are grabbed, the thermostats of the selected brand/manufacturer are stored.
+// When the next button is pressed, the selected thermostats are sent to the next View Controller.
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    BrandTableCell *currentCell = (BrandTableCell *)[tableView cellForRowAtIndexPath:indexPath];
+    BrandTableCellForThermometers *currentCell = (BrandTableCellForThermometers *)[tableView cellForRowAtIndexPath:indexPath];
     
+    //Update the Accessory Views - Single Selection
     if (self.indexPathSelected) {
-        BrandTableCell *previousSelection = (BrandTableCell *)[tableView cellForRowAtIndexPath:self.indexPathSelected];
+        BrandTableCellForThermometers *previousSelection = (BrandTableCellForThermometers *)[tableView cellForRowAtIndexPath:self.indexPathSelected];
         previousSelection.accessoryType = UITableViewCellAccessoryNone;
     }
     
@@ -121,13 +119,14 @@ static NSString * const kLoggedIn = @"loggedinalready";
     self.indexPathSelected = indexPath;
     
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    NSString *accessToken = [userDefaults objectForKey:kAccessToken];
-    
-    NSString *valueForHTTPHeader = [NSString stringWithFormat:@"Bearer %@", accessToken];
-    
     
     //Call to the API using User Token to Find Light Resources
-    NSURL *url = [NSURL URLWithString:@"https://winkapi.quirky.com/users/me/thermostats"];
+
+    NSString *accessToken = [userDefaults objectForKey:kAccessToken];
+    NSString *valueForHTTPHeader = [NSString stringWithFormat:@"Bearer %@", accessToken];
+    NSString *urlString = [NSString stringWithFormat:@"%@/users/me/thermostats", BaseAPIString];
+    
+    NSURL *url = [NSURL URLWithString:urlString];
     NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:url];
     
     [urlRequest setHTTPMethod:@"GET"];
@@ -142,83 +141,61 @@ static NSString * const kLoggedIn = @"loggedinalready";
                                       
                                       if (error) {
                                           
-                                          UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Error in Request" delegate:self cancelButtonTitle:@"done" otherButtonTitles: nil];
+                                          UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Error Finding Thermostats" delegate:self cancelButtonTitle:@"done" otherButtonTitles: nil];
                                           
                                           [errorAlert show];
                                           
                                           return;
+                                      } else {
+                                          
+                                          if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+                                              NSLog(@"Response HTTP Status code: %ld\n", (long)[(NSHTTPURLResponse *)response statusCode]);
+                                              NSLog(@"Response HTTP Headers:\n%@\n", [(NSHTTPURLResponse *)response allHeaderFields]);
+                                          }
+                                          
+                                          //TODO = push out to a separate function
+                                          
+                                          NSString* body = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+                                          NSLog(@"Response Body:\n%@\n", body);
+                                          
+                                          dispatch_async(dispatch_get_main_queue(), ^{
+                                              [self resultsFromRequest:data];
+                                          });
+                                          
+                                          
                                       }
-                                      
-                                      if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-                                          NSLog(@"Response HTTP Status code: %ld\n", (long)[(NSHTTPURLResponse *)response statusCode]);
-                                          NSLog(@"Response HTTP Headers:\n%@\n", [(NSHTTPURLResponse *)response allHeaderFields]);
-                                      }
-                                      
-                                      //TODO = push out to a separate function
-                                      
-                                      NSString* body = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-                                      NSLog(@"Response Body:\n%@\n", body);
-                                      
-                                      dispatch_async(dispatch_get_main_queue(), ^{
-                                          [self resultsFromRequest:data];
-                                      });
-                                      
-                                      
+                                    
                                   }];
     [task resume];
 
     
-
-
-    /*
-    BrandTableCell *currentCell = (BrandTableCell *)[tableView cellForRowAtIndexPath:indexPath];
-    
-    UIImage *currentBrandImage = currentCell.brandImageView.image;
-
-
-    
-    
-    
-    //Change what a Cell Looks like on Selection
-    CIContext * context = [CIContext contextWithOptions:nil];
-    CIImage * ciImage = [[CIImage alloc] initWithImage:currentBrandImage];
-    
-    CIFilter * blurFilter = [CIFilter filterWithName:@"CIGaussianBlur"];
-    [blurFilter setValue:ciImage forKey:kCIInputImageKey];
-    
-    CGImageRef ref = [context createCGImage:blurFilter.outputImage fromRect:[blurFilter outputImage].extent];
-    
-    currentCell.brandImageView.image = [UIImage imageWithCGImage:ref];
-    
-    
-    //Call to the API to find the Resource with the Specified Brand Name
-
-    */
 }
 
 
+//Parsing Through Response for Thermostats
 - (void)resultsFromRequest:(NSData *)data {
+    
+    NSError *errorJSON;
+    NSMutableDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&errorJSON];
+    
+    NSArray *thermostats = [dictionary objectForKey:@"data"];
+    
+    int numberOfThermostats = 0;
+    
+    [self.selectedThermostats removeAllObjects];
     
     NSIndexPath *selectedPath = [self.thermostatTable indexPathForSelectedRow];
     BrandOfWink *selectedBrand = [self.thermostatBrands objectAtIndex:selectedPath.row];
-    
     NSString *manufacturer = selectedBrand.manufacturerName;
-    
-    NSError *errorJSON;
-    NSMutableDictionary *allThermostats = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&errorJSON];
-    
-    NSArray *thermostats = [allThermostats objectForKey:@"data"];
-    
-    int numberOfThermostats = 0;
 
+    //For Each Thermostat Found - Create a new Thermostat Model Object and Add To Results Array
     for (NSDictionary *thermostat in thermostats) {
         
         ThermostatInWink *newThermostat = [[ThermostatInWink alloc] initWithThermostatID:thermostat[@"thermostat_id"] withName:thermostat[@"name"] withManufacturer:thermostat[@"device_manufacturer"]];
         
-        
         [self.allThermostats addObject:newThermostat];
         
-        
+        //Request is For All Thermostats - Select Only Thermostats with the Selected Manufacturer
         if ([newThermostat.thermostatManufacturer isEqualToString:manufacturer]) {
             numberOfThermostats += 1;
             [self.selectedThermostats addObject:newThermostat];
@@ -226,10 +203,11 @@ static NSString * const kLoggedIn = @"loggedinalready";
         
     }
     
+    //Update View
     if (numberOfThermostats >= 1) {
-        self.resultTextLabel.text = [NSString stringWithFormat:@"Found a thermostat"];
+        self.resultTextLabel.text = [NSString stringWithFormat:@"Found A Thermostat"];
     } else {
-        self.resultTextLabel.text = [NSString stringWithFormat:@"No thermostats found"];
+        self.resultTextLabel.text = [NSString stringWithFormat:@"No Thermostats Found"];
     }
         
     
@@ -240,11 +218,45 @@ static NSString * const kLoggedIn = @"loggedinalready";
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     
+    //Pass Thermostats to Next View Controller
     SetupLightsVC *setupLightsView = (SetupLightsVC *)[segue destinationViewController];
     setupLightsView.selectedThermostats = self.selectedThermostats;
     
 }
 
 
+
+
+
+
+
+//self.indexPathSelected = [[NSIndexPath alloc] init];
+//self.indexPathSelected = nil;
+
+
+/*
+ BrandTableCell *currentCell = (BrandTableCell *)[tableView cellForRowAtIndexPath:indexPath];
+ 
+ UIImage *currentBrandImage = currentCell.brandImageView.image;
+ 
+ 
+ 
+ 
+ 
+ //Change what a Cell Looks like on Selection
+ CIContext * context = [CIContext contextWithOptions:nil];
+ CIImage * ciImage = [[CIImage alloc] initWithImage:currentBrandImage];
+ 
+ CIFilter * blurFilter = [CIFilter filterWithName:@"CIGaussianBlur"];
+ [blurFilter setValue:ciImage forKey:kCIInputImageKey];
+ 
+ CGImageRef ref = [context createCGImage:blurFilter.outputImage fromRect:[blurFilter outputImage].extent];
+ 
+ currentCell.brandImageView.image = [UIImage imageWithCGImage:ref];
+ 
+ 
+ //Call to the API to find the Resource with the Specified Brand Name
+ 
+ */
 
 @end

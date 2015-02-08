@@ -29,7 +29,7 @@
 
 - (id)init {
     
-    return [self initWithThermostatID:@"0000" withName:@"Wink" withManufacturer:@"Wink"];
+    return [self initWithThermostatID:@"0000" withName:@"Thermostat" withManufacturer:@"Wink"];
 }
 
 @end

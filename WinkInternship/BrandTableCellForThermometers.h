@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface BrandTableCell : UITableViewCell
+@interface BrandTableCellForThermometers : UITableViewCell
 
 @property (weak, nonatomic) IBOutlet UIImageView *brandImageView;
 

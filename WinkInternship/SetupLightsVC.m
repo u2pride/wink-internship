@@ -8,16 +8,13 @@
 
 #import "BrandOfWink.h"
 #import "BrandTableCellForLights.h"
-#import "SetupLightsVC.h"
-#import "LightInWink.h"
 #import "ControlRobotVC.h"
+#import "LightInWink.h"
+#import "SetupLightsVC.h"
 
 static NSString * const BaseAPIString = @"https://winkapi.quirky.com/";
 static NSString * const kAccessToken = @"access_token";
 static NSString * const kRefreshToken = @"refresh_token";
-static NSString * const kUsername = @"usernamekey";
-static NSString * const kPassword = @"passwordkey";
-static NSString * const kLoggedIn = @"loggedinalready";
 
 @interface SetupLightsVC ()
 
@@ -36,19 +33,18 @@ static NSString * const kLoggedIn = @"loggedinalready";
 
 @implementation SetupLightsVC
 
-@synthesize lightBrands, lightBrandsTable, nextButton, lightsFound, selectedLights, selectedThermostats, lightsTextLabel, indexPathSelected;
+@synthesize lightBrandsTable, nextButton, lightsTextLabel, lightBrands, lightsFound, selectedLights, indexPathSelected, selectedThermostats;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    //initialize arrays
     self.lightsFound = [[NSMutableArray alloc] init];
     self.selectedLights = [[NSMutableArray alloc] init];
-    
-    self.lightsTextLabel.text = @"Select A Brand";
-    
-    //Create Brand Objects
     self.lightBrands = [[NSMutableArray alloc] init];
+
     
+    //Create Brand Objects for Table View
     BrandOfWink *philips = [[BrandOfWink alloc] initWithBrandName:@"Philips" withBrandImage:[UIImage imageNamed:@"Philips"] withManufacturer:@"philips"];
     BrandOfWink *ge = [[BrandOfWink alloc] initWithBrandName:@"GE" withBrandImage:[UIImage imageNamed:@"GE"] withManufacturer:@"ge"];
     BrandOfWink *tcp = [[BrandOfWink alloc] initWithBrandName:@"TCP" withBrandImage:[UIImage imageNamed:@"TCP"] withManufacturer:@"tcp"];
@@ -59,19 +55,21 @@ static NSString * const kLoggedIn = @"loggedinalready";
     [self.lightBrands addObject:tcp];
     [self.lightBrands addObject:cree];
     
-    //Adjustments to Navigation Bar
+    //Adjust Navigation Bar Title
     [self.navigationItem setTitle:@"Setup Lights"];
     
-    
-    //Adjustments to Table View, View,s and Button
+    //Adjustments to View
     self.view.backgroundColor = [UIColor colorWithRed:0.965 green:0.965 blue:0.965 alpha:1.0];
     self.lightBrandsTable.layer.cornerRadius = 20;
     self.nextButton.layer.cornerRadius = 15;
     self.nextButton.titleLabel.text = @"Next";
     self.nextButton.backgroundColor = [UIColor colorWithRed:0 green:0.722 blue:0.945 alpha:1];
+    self.lightsTextLabel.text = @"Select A Brand";
+
 }
 
 
+#pragma mark - UITableView Delegate/DataSource Methods
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
@@ -96,13 +94,13 @@ static NSString * const kLoggedIn = @"loggedinalready";
 
 // Method Description
 // Upon selecting a row, the app grabs the stored tokens and calls the api for all of the lights owned by the user.
-// Once the lights are grabbed and store in 'lightsFound', the lights of the selected brand/manufacturer are stored in 'selectedlights'
-// When the next button is pressed, the 'selectedLights' are sent to the Control View to be used.
+// Once the lights are grabbed, the lights of the selected brand/manufacturer are stored.
+// When the next button is pressed, the selected lights are sent to the next View Controller.
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    
     
     BrandTableCellForLights *currentCell = (BrandTableCellForLights *)[tableView cellForRowAtIndexPath:indexPath];
     
+    //Update the Accessory Views - Single Selection
     if (self.indexPathSelected) {
         BrandTableCellForLights *previousSelection = (BrandTableCellForLights *)[tableView cellForRowAtIndexPath:self.indexPathSelected];
         previousSelection.accessoryType = UITableViewCellAccessoryNone;
@@ -111,16 +109,14 @@ static NSString * const kLoggedIn = @"loggedinalready";
     currentCell.accessoryType = UITableViewCellAccessoryCheckmark;
     self.indexPathSelected = indexPath;
     
-    //Refresh SelectedLights
-    //self.selectedLights = nil;
-    
     //Grab the tokens
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     NSString *accessToken = [userDefaults objectForKey:kAccessToken];
     NSString *valueForHTTPHeader = [NSString stringWithFormat:@"Bearer %@", accessToken];
-    
+    NSString *urlString = [NSString stringWithFormat:@"%@/users/me/light_bulbs", BaseAPIString];
+
     //Call to the API using User Token to Find Light Resources
-    NSURL *url = [NSURL URLWithString:@"https://winkapi.quirky.com/users/me/light_bulbs"];
+    NSURL *url = [NSURL URLWithString:urlString];
     NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:url];
     
     [urlRequest setHTTPMethod:@"GET"];
@@ -135,25 +131,27 @@ static NSString * const kLoggedIn = @"loggedinalready";
                                       
                                       if (error) {
 
-                                        UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Error in Request" delegate:self cancelButtonTitle:@"done" otherButtonTitles: nil];
+                                        UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Error Finding Lights" delegate:self cancelButtonTitle:@"done" otherButtonTitles: nil];
                     
                                         [errorAlert show];
                                           
                                           return;
+                                      
+                                      } else {
+                                          
+                                          if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+                                              NSLog(@"Response HTTP Status code: %ld\n", (long)[(NSHTTPURLResponse *)response statusCode]);
+                                              NSLog(@"Response HTTP Headers:\n%@\n", [(NSHTTPURLResponse *)response allHeaderFields]);
+                                          }
+                                          
+                                          NSString* body = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+                                          NSLog(@"Response Body:\n%@\n", body);
+                                          
+                                          dispatch_async(dispatch_get_main_queue(), ^{
+                                              [self resultsFromRequest:data];
+                                          });
+
                                       }
-                                      
-                                      if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-                                          NSLog(@"Response HTTP Status code: %ld\n", (long)[(NSHTTPURLResponse *)response statusCode]);
-                                          NSLog(@"Response HTTP Headers:\n%@\n", [(NSHTTPURLResponse *)response allHeaderFields]);
-                                      }
-                                      
-                                      NSString* body = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-                                      NSLog(@"Response Body:\n%@\n", body);
-                                      
-                                      dispatch_async(dispatch_get_main_queue(), ^{
-                                          [self resultsFromRequest:data];
-                                      });
-                                      
                                       
                                       
                                   }];
@@ -164,14 +162,13 @@ static NSString * const kLoggedIn = @"loggedinalready";
     
 }
 
+//Parsing Through Response for Lights
 - (void)resultsFromRequest:(NSData *)data {
     
-    NSLog(@"Results here");
-    
     NSError *errorJSON;
-    NSMutableDictionary *allDevices = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&errorJSON];
+    NSMutableDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&errorJSON];
     
-    NSArray *allLights = [allDevices objectForKey:@"data"];
+    NSArray *allLights = [dictionary objectForKey:@"data"];
     
     int numberOfLights = 0;
     
@@ -179,7 +176,6 @@ static NSString * const kLoggedIn = @"loggedinalready";
     
     NSIndexPath *selectedPath = [self.lightBrandsTable indexPathForSelectedRow];
     BrandOfWink *selectedBrand = [self.lightBrands objectAtIndex:selectedPath.row];
-    
     NSString *manufacturer = selectedBrand.manufacturerName;
     
     for (NSDictionary *light in allLights) {
@@ -189,21 +185,25 @@ static NSString * const kLoggedIn = @"loggedinalready";
         
         LightInWink *newLight = [[LightInWink alloc] initWithLightID:light[@"light_bulb_id"] withLightName:light[@"name"] withManufacturer:light[@"device_manufacturer"]];
         
+        [self.lightsFound addObject:newLight];
         
-        NSLog(@"First: %@ and Second: %@", newLight.lightManufacturer, manufacturer);
-        
+        //Request is For All Lights - Select Only Lights with the Selected Manufacturer
         if ([newLight.lightManufacturer isEqualToString:manufacturer]) {
             numberOfLights += 1;
-            NSLog(@"HEY THERE");
             [self.selectedLights addObject:newLight];
         }
         
-        [self.lightsFound addObject:newLight];
         
         
     }
     
-    self.lightsTextLabel.text = [NSString stringWithFormat:@"Found %d lights", numberOfLights];
+    
+    //Update View
+    if (numberOfLights >= 1) {
+        self.lightsTextLabel.text = [NSString stringWithFormat:@"Found %d Lights", numberOfLights];
+    } else {
+        self.lightsTextLabel.text = [NSString stringWithFormat:@"No Lights Found"];
+    }
 
 
 }
@@ -212,14 +212,12 @@ static NSString * const kLoggedIn = @"loggedinalready";
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     
     ControlRobotVC *controlViewController = (ControlRobotVC *)[segue destinationViewController];
-    
+    //Pass Lights and Thermostats to Control View
     controlViewController.userLights = self.selectedLights;
     controlViewController.userThermostats = self.selectedThermostats;
     
-    //self.navigationItem.backBarButtonItem=[[UIBarButtonItem alloc] initWithTitle:@" " style:UIBarButtonItemStylePlain target:nil action:nil];
-
-    
 }
+
 
 
 /*
@@ -265,6 +263,10 @@ static NSString * const kLoggedIn = @"loggedinalready";
 
 */
 
+//Refresh SelectedLights
+//self.selectedLights = nil;
+
+//self.navigationItem.backBarButtonItem=[[UIBarButtonItem alloc] initWithTitle:@" " style:UIBarButtonItemStylePlain target:nil action:nil];
 
 
 
