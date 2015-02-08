@@ -20,6 +20,7 @@ static NSString * const kRefreshToken = @"refresh_token";
 @property (nonatomic, strong) NSMutableArray *allLightImageViews;
 @property (nonatomic, strong) NSMutableArray *activeLightsForTemperatureEffect;
 
+@property (weak, nonatomic) IBOutlet UILabel *headingText;
 @property (weak, nonatomic) IBOutlet UISlider *warmSlider;
 @property (weak, nonatomic) IBOutlet UISlider *coolSlider;
 @property (weak, nonatomic) IBOutlet UILabel *thermostatStatusLabel;
@@ -38,11 +39,14 @@ static NSString * const kRefreshToken = @"refresh_token";
 
 @synthesize userLights, userThermostats;
 
-@synthesize allLightImageViews, activeLightsForTemperatureEffect, warmSlider, coolSlider, thermostatStatusLabel, numberOfCoolSliderValueUpdates, numberOfWarmSliderValueUpdates, timerToResetImages;
+@synthesize allLightImageViews, activeLightsForTemperatureEffect, warmSlider, coolSlider, thermostatStatusLabel, numberOfCoolSliderValueUpdates, numberOfWarmSliderValueUpdates, timerToResetImages, headingText;
 
 
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
+- (void)viewWillAppear:(BOOL)animated {
+    
+    [super viewWillAppear:animated];
+    
+    self.headingText.text = @"Use this page to change the amount of temperature difference that appears in your lights when your thermostat is heating or cooling your house.";
     
     //Setup Sliders For Min and Max Temperature Values
     self.coolSlider.minimumValue = 5500;
@@ -50,6 +54,12 @@ static NSString * const kRefreshToken = @"refresh_token";
 
     self.warmSlider.minimumValue = 1000;
     self.warmSlider.maximumValue = 5500;
+    
+    self.coolSlider.minimumValueImage = [UIImage imageNamed:@"CoolMin"];
+    self.coolSlider.maximumValueImage = [UIImage imageNamed:@"CoolMax"];
+    
+    self.warmSlider.minimumValueImage = [UIImage imageNamed:@"WarmMin"];
+    self.warmSlider.maximumValueImage = [UIImage imageNamed:@"WarmMax"];
     
     //Used to limit slider value updates
     self.numberOfWarmSliderValueUpdates = 0;
@@ -60,17 +70,8 @@ static NSString * const kRefreshToken = @"refresh_token";
     self.activeLightsForTemperatureEffect = [[NSMutableArray alloc] init];
     
     
-    NSLog(@"WHERE WE AT: %@", self.userLights);
-    for (LightInWink *light in self.userLights) {
-        NSLog(@"%@", light.lightName);
-        NSLog(@"%@", light.lightID);
-        NSLog(@"%@", light.lightManufacturer);
-
-    }
-    
-    //Adjustments to the Navigation Bar
+    //Adjustment to the Navigation Bar Title
     [self.navigationItem setTitle:@"Control"];
-    self.navigationItem.leftBarButtonItem.title = @" ";
     
     //Each Light Found in the Previous Step is Represented with an Light Bulb Image
     CGRect initialFrame = CGRectMake(20, self.view.frame.size.height - 120, 80, 80);
@@ -81,7 +82,7 @@ static NSString * const kRefreshToken = @"refresh_token";
         //used to identify the lightImageView
         lightImageView.tag = [light.lightID intValue];
         //update the frame
-        initialFrame.origin.x +=100;
+        initialFrame.origin.x += 80;
         //add a tap gesture Recognizer
         lightImageView.userInteractionEnabled = YES;
         UITapGestureRecognizer *tapLight = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(enableDisableLight:)];

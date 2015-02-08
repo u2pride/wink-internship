@@ -21,6 +21,7 @@ static NSString * const kRefreshToken = @"refresh_token";
 @property (weak, nonatomic) IBOutlet UITableView *lightBrandsTable;
 @property (weak, nonatomic) IBOutlet UIButton *nextButton;
 @property (weak, nonatomic) IBOutlet UILabel *lightsTextLabel;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activitySpinner;
 
 @property (nonatomic, strong) NSMutableArray *lightBrands;
 
@@ -33,7 +34,7 @@ static NSString * const kRefreshToken = @"refresh_token";
 
 @implementation SetupLightsVC
 
-@synthesize lightBrandsTable, nextButton, lightsTextLabel, lightBrands, lightsFound, selectedLights, indexPathSelected, selectedThermostats;
+@synthesize lightBrandsTable, nextButton, lightsTextLabel, lightBrands, lightsFound, selectedLights, indexPathSelected, selectedThermostats, activitySpinner;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -43,6 +44,7 @@ static NSString * const kRefreshToken = @"refresh_token";
     self.selectedLights = [[NSMutableArray alloc] init];
     self.lightBrands = [[NSMutableArray alloc] init];
 
+    self.activitySpinner.hidesWhenStopped = YES;
     
     //Create Brand Objects for Table View
     BrandOfWink *philips = [[BrandOfWink alloc] initWithBrandName:@"Philips" withBrandImage:[UIImage imageNamed:@"Philips"] withManufacturer:@"philips"];
@@ -59,7 +61,7 @@ static NSString * const kRefreshToken = @"refresh_token";
     [self.navigationItem setTitle:@"Setup Lights"];
     
     //Adjustments to View
-    self.view.backgroundColor = [UIColor colorWithRed:0.965 green:0.965 blue:0.965 alpha:1.0];
+    self.view.backgroundColor = [UIColor colorWithRed:0.92 green:0.92 blue:0.92 alpha:1.0];
     self.lightBrandsTable.layer.cornerRadius = 20;
     self.nextButton.layer.cornerRadius = 15;
     self.nextButton.titleLabel.text = @"Next";
@@ -97,6 +99,8 @@ static NSString * const kRefreshToken = @"refresh_token";
 // Once the lights are grabbed, the lights of the selected brand/manufacturer are stored.
 // When the next button is pressed, the selected lights are sent to the next View Controller.
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    [self.activitySpinner startAnimating];
     
     BrandTableCellForLights *currentCell = (BrandTableCellForLights *)[tableView cellForRowAtIndexPath:indexPath];
     
@@ -204,7 +208,8 @@ static NSString * const kRefreshToken = @"refresh_token";
     } else {
         self.lightsTextLabel.text = [NSString stringWithFormat:@"No Lights Found"];
     }
-
+    
+    [self.activitySpinner stopAnimating];
 
 }
 

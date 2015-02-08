@@ -15,7 +15,6 @@ static NSString * const kAccessToken = @"access_token";
 static NSString * const kRefreshToken = @"refresh_token";
 static NSString * const kUsername = @"usernamekey";
 static NSString * const kPassword = @"passwordkey";
-static NSString * const kLoggedIn = @"loggedinalready";
 
 static NSString * const kClientID = @"2ec4f93efd4390a33f6b8dcb12875377";
 static NSString * const kClientSecret = @"d7d606469be78ac2a3fce4e5419ab4f1";
@@ -26,6 +25,7 @@ static NSString * const kClientSecret = @"d7d606469be78ac2a3fce4e5419ab4f1";
 @property (weak, nonatomic) IBOutlet UITextField *passwordTextField;
 @property (weak, nonatomic) IBOutlet UIImageView *winkImageView;
 @property (weak, nonatomic) IBOutlet UIButton *loginButton;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activitySpinner;
 
 - (IBAction)login:(id)sender;
 
@@ -35,18 +35,10 @@ static NSString * const kClientSecret = @"d7d606469be78ac2a3fce4e5419ab4f1";
 
 @implementation LoginVC
 
-@synthesize usernameTextField, passwordTextField, winkImageView, loginButton;
+@synthesize usernameTextField, passwordTextField, winkImageView, loginButton, activitySpinner;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
-    //Check to see if user is already logged in.
-    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    NSString *loggedIn = [userDefaults objectForKey:kLoggedIn];
-    if ([loggedIn isEqualToString:@"yes"]) {
-        [self performSegueWithIdentifier:@"loginToControl" sender:self];
-        NSLog(@"Logged In");
-    }
     
     //Setup View
     self.view.backgroundColor = [UIColor colorWithRed:0 green:0.722 blue:0.945 alpha:1];
@@ -55,11 +47,15 @@ static NSString * const kClientSecret = @"d7d606469be78ac2a3fce4e5419ab4f1";
     self.usernameTextField.delegate = self;
     self.loginButton.layer.cornerRadius = 15;
     
+    self.activitySpinner.hidesWhenStopped = YES;
+
 }
 
 
 // Method Fired When Login Button is Pressed
 - (IBAction)login:(id)sender {
+    
+    [self.activitySpinner startAnimating];
     
     NSString *username = self.usernameTextField.text;
     NSString *password = self.passwordTextField.text;
@@ -71,7 +67,6 @@ static NSString * const kClientSecret = @"d7d606469be78ac2a3fce4e5419ab4f1";
     [userDefaults setObject:password forKey:kPassword];
     
     [userDefaults synchronize];
-    
     
     //Create Strings for API Request
     NSString *httpBodyString = [NSString stringWithFormat:@"{\n    \"client_id\": \"%@\",\n    \"client_secret\": \"%@\",\n    \"username\": \"%@\",\n    \"password\": \"%@\",\n    \"grant_type\": \"password\"\n}", kClientID, kClientSecret, username, password];
@@ -114,16 +109,16 @@ static NSString * const kClientSecret = @"d7d606469be78ac2a3fce4e5419ab4f1";
                                           NSString *refreshToken = [json objectForKey:@"refresh_token"];
                                           NSLog(@"Refresh Token: %@", refreshToken);
                                           
-                                          //Store Tokens to User Preferences
+                                          //Store Tokens to User Preferences - Could be Used to Determine if the User is Already Logged In and Setup
                                           NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
                                           
                                           [userDefaults setObject:accessToken forKey:kAccessToken];
                                           [userDefaults setObject:refreshToken forKey:kRefreshToken];
-                                          [userDefaults setObject:@"yes" forKey:kLoggedIn];
                                           
                                           [userDefaults synchronize];
                                           
                                           dispatch_async(dispatch_get_main_queue(), ^{
+                                              [self.activitySpinner stopAnimating];
                                               [self performSegueWithIdentifier:@"loginToSetup" sender:self];
                                           });
 
@@ -216,4 +211,13 @@ static NSString * const kClientSecret = @"d7d606469be78ac2a3fce4e5419ab4f1";
 //NSURL *URL = [NSURL URLWithString:@"https://winkapi.quirky.com/oauth2/token"];
 
 
+/*
+ //Check to see if user is already logged in.
+ NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+ NSString *loggedIn = [userDefaults objectForKey:kLoggedIn];
+ if ([loggedIn isEqualToString:@"yes"]) {
+ [self performSegueWithIdentifier:@"loginToControl" sender:self];
+ NSLog(@"Logged In");
+ }
+ */
 @end

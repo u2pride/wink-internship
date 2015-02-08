@@ -22,6 +22,7 @@ static NSString * const kRefreshToken = @"refresh_token";
 @property (weak, nonatomic) IBOutlet UITableView *thermostatTable;
 @property (weak, nonatomic) IBOutlet UIButton *nextButton;
 @property (weak, nonatomic) IBOutlet UILabel *resultTextLabel;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activitySpinner;
 
 @property (nonatomic, strong) NSMutableArray *thermostatBrands;
 
@@ -34,7 +35,7 @@ static NSString * const kRefreshToken = @"refresh_token";
 
 @implementation SetupThermostatVC
 
-@synthesize thermostatTable, nextButton, resultTextLabel, thermostatBrands, allThermostats, selectedThermostats, indexPathSelected;
+@synthesize thermostatTable, nextButton, resultTextLabel, thermostatBrands, allThermostats, selectedThermostats, indexPathSelected, activitySpinner;
 
 
 - (void)viewDidLoad {
@@ -45,6 +46,8 @@ static NSString * const kRefreshToken = @"refresh_token";
     self.selectedThermostats = [[NSMutableArray alloc] init];
     self.thermostatBrands = [[NSMutableArray alloc] init];
 
+    self.activitySpinner.hidesWhenStopped = YES;
+    
     //Create Brand Objects
     BrandOfWink *nest = [[BrandOfWink alloc] initWithBrandName:@"Nest" withBrandImage:[UIImage imageNamed:@"Nest"] withManufacturer:@"nest"];
     BrandOfWink *quirky = [[BrandOfWink alloc] initWithBrandName:@"Quirky" withBrandImage:[UIImage imageNamed:@"Quirky"] withManufacturer:@"quirky"];
@@ -66,8 +69,8 @@ static NSString * const kRefreshToken = @"refresh_token";
     self.navigationController.navigationBar.translucent = NO;
 
     
-    //Adjustments to Table View, View,s and Button
-    self.view.backgroundColor = [UIColor colorWithRed:0.965 green:0.965 blue:0.965 alpha:1.0];
+    //Adjustments to Views
+    self.view.backgroundColor = [UIColor colorWithRed:0.92 green:0.92 blue:0.92 alpha:1.0];
     self.thermostatTable.layer.cornerRadius = 20;
     self.nextButton.layer.cornerRadius = 15;
     self.nextButton.titleLabel.text = @"Next";
@@ -107,6 +110,8 @@ static NSString * const kRefreshToken = @"refresh_token";
 // Once the thermostats are grabbed, the thermostats of the selected brand/manufacturer are stored.
 // When the next button is pressed, the selected thermostats are sent to the next View Controller.
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    [self.activitySpinner startAnimating];
     
     BrandTableCellForThermometers *currentCell = (BrandTableCellForThermometers *)[tableView cellForRowAtIndexPath:indexPath];
     
@@ -154,8 +159,6 @@ static NSString * const kRefreshToken = @"refresh_token";
                                               NSLog(@"Response HTTP Headers:\n%@\n", [(NSHTTPURLResponse *)response allHeaderFields]);
                                           }
                                           
-                                          //TODO = push out to a separate function
-                                          
                                           NSString* body = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
                                           NSLog(@"Response Body:\n%@\n", body);
                                           
@@ -175,6 +178,7 @@ static NSString * const kRefreshToken = @"refresh_token";
 
 //Parsing Through Response for Thermostats
 - (void)resultsFromRequest:(NSData *)data {
+    
     
     NSError *errorJSON;
     NSMutableDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&errorJSON];
@@ -210,6 +214,8 @@ static NSString * const kRefreshToken = @"refresh_token";
     } else {
         self.resultTextLabel.text = [NSString stringWithFormat:@"No Thermostats Found"];
     }
+    
+    [self.activitySpinner stopAnimating];
         
     
 }
