@@ -209,8 +209,6 @@ static NSString * const kLoggedIn = @"loggedinalready";
 }
 
 
-
-
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     
     ControlRobotVC *controlViewController = (ControlRobotVC *)[segue destinationViewController];

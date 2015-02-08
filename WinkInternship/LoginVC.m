@@ -33,7 +33,7 @@ static NSString * const kClientSecret = @"d7d606469be78ac2a3fce4e5419ab4f1";
 
 @implementation LoginVC
 
-@synthesize usernameTextField, passwordTextField, winkImageView, loginButton, mockServerButton;
+@synthesize usernameTextField, passwordTextField, winkImageView, loginButton;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -56,7 +56,6 @@ static NSString * const kClientSecret = @"d7d606469be78ac2a3fce4e5419ab4f1";
     
     
     self.loginButton.layer.cornerRadius = 15;
-    self.mockServerButton.layer.cornerRadius = 15;
     
 }
 

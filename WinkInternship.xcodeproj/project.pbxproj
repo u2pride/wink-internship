@@ -119,8 +119,8 @@
 				A41E168B1A82FC630080DD7A /* LoginVC.h */,
 				A41E168C1A82FC630080DD7A /* LoginVC.m */,
 				A4672A051A8521E7004AF518 /* Models */,
-				A4E733791A84027000B3C70A /* Setup Thermo and Lights */,
-				A4E7337A1A84029300B3C70A /* Control Main */,
+				A4E733791A84027000B3C70A /* Setup Controllers */,
+				A4E7337A1A84029300B3C70A /* Main Controllers */,
 				A4E7337B1A8402A100B3C70A /* Custom Table Cells */,
 				A41E16911A82FC630080DD7A /* Images.xcassets */,
 				A41E16931A82FC630080DD7A /* LaunchScreen.xib */,
@@ -174,7 +174,7 @@
 			name = Models;
 			sourceTree = "<group>";
 		};
-		A4E733791A84027000B3C70A /* Setup Thermo and Lights */ = {
+		A4E733791A84027000B3C70A /* Setup Controllers */ = {
 			isa = PBXGroup;
 			children = (
 				A4315F571A83BFA200CA6FEB /* SetupThermostatVC.h */,
@@ -182,16 +182,16 @@
 				A4315F631A83CDE300CA6FEB /* SetupLightsVC.h */,
 				A4315F641A83CDE300CA6FEB /* SetupLightsVC.m */,
 			);
-			name = "Setup Thermo and Lights";
+			name = "Setup Controllers";
 			sourceTree = "<group>";
 		};
-		A4E7337A1A84029300B3C70A /* Control Main */ = {
+		A4E7337A1A84029300B3C70A /* Main Controllers */ = {
 			isa = PBXGroup;
 			children = (
 				A4315F661A83D4D500CA6FEB /* ControlRobotVC.h */,
 				A4315F671A83D4D500CA6FEB /* ControlRobotVC.m */,
 			);
-			name = "Control Main";
+			name = "Main Controllers";
 			sourceTree = "<group>";
 		};
 		A4E7337B1A8402A100B3C70A /* Custom Table Cells */ = {
