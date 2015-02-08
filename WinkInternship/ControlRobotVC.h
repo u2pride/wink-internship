@@ -13,6 +13,4 @@
 @property (nonatomic, strong) NSArray *userLights;
 @property (nonatomic, strong) NSArray *userThermostats;
 
-- (IBAction)startLightCorrection:(id)sender;
-
 @end

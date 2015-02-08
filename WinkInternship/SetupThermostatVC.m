@@ -55,7 +55,8 @@ static NSString * const kRefreshToken = @"refresh_token";
     [self.thermostatBrands addObject:honeywell];
     
     
-    //Adjustments to Navigation Bar - Same Navigation Bar is used throughout the App, So Adjustments Only Needed Here
+    //Adjustments to Navigation & Status Bar - Same Navigation Bar is used throughout the App, So Adjustments Only Needed Here
+    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     [self.navigationItem setTitle:@"Setup Thermostat"];
     self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:0 green:0.722 blue:0.945 alpha:1];
     

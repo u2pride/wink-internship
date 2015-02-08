@@ -44,7 +44,7 @@ static NSString * const kClientSecret = @"d7d606469be78ac2a3fce4e5419ab4f1";
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     NSString *loggedIn = [userDefaults objectForKey:kLoggedIn];
     if ([loggedIn isEqualToString:@"yes"]) {
-        //[self performSegueWithIdentifier:@"loginToControl" sender:self];
+        [self performSegueWithIdentifier:@"loginToControl" sender:self];
         NSLog(@"Logged In");
     }
     
