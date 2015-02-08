@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		A41E16871A82FC630080DD7A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A41E16861A82FC630080DD7A /* main.m */; };
 		A41E168A1A82FC630080DD7A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A41E16891A82FC630080DD7A /* AppDelegate.m */; };
-		A41E168D1A82FC630080DD7A /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A41E168C1A82FC630080DD7A /* ViewController.m */; };
+		A41E168D1A82FC630080DD7A /* LoginVC.m in Sources */ = {isa = PBXBuildFile; fileRef = A41E168C1A82FC630080DD7A /* LoginVC.m */; };
 		A41E16901A82FC630080DD7A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A41E168E1A82FC630080DD7A /* Main.storyboard */; };
 		A41E16921A82FC630080DD7A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A41E16911A82FC630080DD7A /* Images.xcassets */; };
 		A41E16951A82FC630080DD7A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = A41E16931A82FC630080DD7A /* LaunchScreen.xib */; };
@@ -41,8 +41,8 @@
 		A41E16861A82FC630080DD7A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		A41E16881A82FC630080DD7A /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		A41E16891A82FC630080DD7A /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		A41E168B1A82FC630080DD7A /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		A41E168C1A82FC630080DD7A /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		A41E168B1A82FC630080DD7A /* LoginVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoginVC.h; sourceTree = "<group>"; };
+		A41E168C1A82FC630080DD7A /* LoginVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LoginVC.m; sourceTree = "<group>"; };
 		A41E168F1A82FC630080DD7A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		A41E16911A82FC630080DD7A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		A41E16941A82FC630080DD7A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
@@ -115,9 +115,9 @@
 			children = (
 				A41E16881A82FC630080DD7A /* AppDelegate.h */,
 				A41E16891A82FC630080DD7A /* AppDelegate.m */,
-				A41E168B1A82FC630080DD7A /* ViewController.h */,
-				A41E168C1A82FC630080DD7A /* ViewController.m */,
 				A41E168E1A82FC630080DD7A /* Main.storyboard */,
+				A41E168B1A82FC630080DD7A /* LoginVC.h */,
+				A41E168C1A82FC630080DD7A /* LoginVC.m */,
 				A4672A051A8521E7004AF518 /* Models */,
 				A4E733791A84027000B3C70A /* Setup Thermo and Lights */,
 				A4E7337A1A84029300B3C70A /* Control Main */,
@@ -305,7 +305,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A41E168D1A82FC630080DD7A /* ViewController.m in Sources */,
+				A41E168D1A82FC630080DD7A /* LoginVC.m in Sources */,
 				A4315F681A83D4D500CA6FEB /* ControlRobotVC.m in Sources */,
 				A4672A041A8521DE004AF518 /* ThermostatInWink.m in Sources */,
 				A4315F5F1A83C37D00CA6FEB /* BrandOfWink.m in Sources */,

@@ -6,10 +6,10 @@
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--LoginVC-->
         <scene sceneID="ufC-wZ-h7g">
             <objects>
-                <viewController id="vXZ-lx-hvc" customClass="ViewController" sceneMemberID="viewController">
+                <viewController id="vXZ-lx-hvc" customClass="LoginVC" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="jyV-Pf-zRb"/>
                         <viewControllerLayoutGuide type="bottom" id="2fi-mo-0CV"/>
@@ -27,7 +27,7 @@
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="sTp-SL-G1e">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="thomas.alexander.ryan@gmail.com" borderStyle="roundedRect" placeholder="username" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="sTp-SL-G1e">
                                 <rect key="frame" x="161" y="259" width="139" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="139" id="mOe-gR-IG1"/>
@@ -35,7 +35,7 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="m7t-OH-OTN">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="1Wink2" borderStyle="roundedRect" placeholder="password" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="m7t-OH-OTN">
                                 <rect key="frame" x="161" y="335" width="139" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="139" id="QEI-P8-oGM"/>
@@ -77,20 +77,16 @@
                                     <action selector="login:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="Fyn-2d-JIr"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="U9h-VT-kSF">
-                                <rect key="frame" x="45" y="485" width="230" height="45"/>
-                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="powered by" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bLX-1y-aRS">
+                                <rect key="frame" x="92" y="186" width="136" height="21"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="230" id="NWj-M7-4Zw"/>
-                                    <constraint firstAttribute="height" constant="45" id="Q5u-Wl-4tC"/>
+                                    <constraint firstAttribute="width" constant="136" id="TUD-m4-SAy"/>
+                                    <constraint firstAttribute="height" constant="21" id="gJq-Oe-q9f"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="24"/>
-                                <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                <state key="normal" title="Use Mock Server">
-                                    <color key="titleColor" red="0.0" green="0.72156862749999995" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                            </button>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
@@ -100,16 +96,16 @@
                             <constraint firstAttribute="centerX" secondItem="Kef-G5-OXV" secondAttribute="centerX" constant="70" id="CQm-nE-c08"/>
                             <constraint firstAttribute="centerX" secondItem="21Q-fR-eT0" secondAttribute="centerX" constant="70" id="CX2-Xh-gmk"/>
                             <constraint firstItem="WoT-1S-J86" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="58" id="JLE-B6-jqo"/>
+                            <constraint firstItem="bLX-1y-aRS" firstAttribute="top" secondItem="WoT-1S-J86" secondAttribute="bottom" constant="8" id="N65-VH-OIg"/>
+                            <constraint firstAttribute="centerX" secondItem="bLX-1y-aRS" secondAttribute="centerX" id="WGI-Ob-4nq"/>
                             <constraint firstAttribute="centerX" secondItem="sTp-SL-G1e" secondAttribute="centerX" constant="-70" id="ggW-tX-BSR"/>
                             <constraint firstItem="sTp-SL-G1e" firstAttribute="top" secondItem="WoT-1S-J86" secondAttribute="bottom" constant="81" id="gwU-D0-Roa"/>
                             <constraint firstAttribute="centerX" secondItem="m7t-OH-OTN" secondAttribute="centerX" constant="-70" id="h7h-kl-uyb"/>
                             <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="KJp-e2-rU0" secondAttribute="bottom" constant="66" id="kWx-Kg-BWG"/>
                             <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="KJp-e2-rU0" secondAttribute="bottom" constant="121" id="q7c-Fu-hkt"/>
-                            <constraint firstItem="U9h-VT-kSF" firstAttribute="top" secondItem="KJp-e2-rU0" secondAttribute="bottom" constant="15" id="q8G-Ht-w1C"/>
                             <constraint firstItem="m7t-OH-OTN" firstAttribute="top" secondItem="sTp-SL-G1e" secondAttribute="bottom" constant="46" id="qFq-5r-ZDg"/>
                             <constraint firstAttribute="centerX" secondItem="WoT-1S-J86" secondAttribute="centerX" id="rQV-vl-Fmp"/>
                             <constraint firstItem="KJp-e2-rU0" firstAttribute="top" secondItem="m7t-OH-OTN" secondAttribute="bottom" constant="60" id="u0V-5O-VTY"/>
-                            <constraint firstAttribute="centerX" secondItem="U9h-VT-kSF" secondAttribute="centerX" id="uEp-7g-tSm"/>
                         </constraints>
                         <variation key="default">
                             <mask key="constraints">
@@ -121,7 +117,6 @@
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <connections>
                         <outlet property="loginButton" destination="KJp-e2-rU0" id="pTJ-P4-zJV"/>
-                        <outlet property="mockServerButton" destination="U9h-VT-kSF" id="rMk-8v-hq2"/>
                         <outlet property="passwordTextField" destination="m7t-OH-OTN" id="Hag-Xd-Q8P"/>
                         <outlet property="usernameTextField" destination="sTp-SL-G1e" id="yvq-yB-Vec"/>
                         <outlet property="winkImageView" destination="WoT-1S-J86" id="77L-KH-xYa"/>
