@@ -187,7 +187,7 @@ static NSString * const kRefreshToken = @"refresh_token";
 //PUT Temperature Updates to the Lights Currently Selected by the User
 //Note: Temperature Property does not currently exist in API for lights.
 - (void)updateTemperatureOfActiveLights:(float)temperature {
-        
+    
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     NSString *accessToken = [userDefaults objectForKey:kAccessToken];
     
@@ -197,7 +197,6 @@ static NSString * const kRefreshToken = @"refresh_token";
     for (NSNumber *lightID in self.activeLightsForTemperatureEffect) {
         
         NSString *urlString = [NSString stringWithFormat:@"%@/light_bulbs/%@", BaseAPIString, lightID];
-        NSLog(@"urlSTring : %@", urlString);
         
         NSURL *url = [NSURL URLWithString:urlString];
         NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:url];

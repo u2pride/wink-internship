@@ -176,10 +176,7 @@ static NSString * const kRefreshToken = @"refresh_token";
     NSString *manufacturer = selectedBrand.manufacturerName;
     
     for (NSDictionary *light in allLights) {
-        
-        NSLog(@"light ID: %@", light[@"light_bulb_id"]);
-        NSLog(@"device manu: %@", light[@"device_manufacturer"]);
-        
+                
         LightInWink *newLight = [[LightInWink alloc] initWithLightID:light[@"light_bulb_id"] withLightName:light[@"name"] withManufacturer:light[@"device_manufacturer"]];
         
         [self.lightsFound addObject:newLight];
