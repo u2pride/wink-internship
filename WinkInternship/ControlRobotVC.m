@@ -49,11 +49,11 @@ static NSString * const kRefreshToken = @"refresh_token";
     self.headingText.text = @"Use this page to change the amount of temperature difference that appears in your lights when your thermostat is heating or cooling your house.";
     
     //Setup Sliders For Min and Max Temperature Values
-    self.coolSlider.minimumValue = 5500;
-    self.coolSlider.maximumValue = 10000;
+    self.coolSlider.minimumValue = 100;
+    self.coolSlider.maximumValue = 1000;
 
-    self.warmSlider.minimumValue = 1000;
-    self.warmSlider.maximumValue = 5500;
+    self.warmSlider.minimumValue = 100;
+    self.warmSlider.maximumValue = 10000;
     
     self.coolSlider.minimumValueImage = [UIImage imageNamed:@"CoolMin"];
     self.coolSlider.maximumValueImage = [UIImage imageNamed:@"CoolMax"];
@@ -97,6 +97,7 @@ static NSString * const kRefreshToken = @"refresh_token";
     //Every minute, check the thermostat status
     //If heating, then adjust the temperature of the connected lights by the value of the warm slider.
     //If cooling, then adjust the temperature of the connected lights by the value of the cool slider.
+    //Next Step:  invalidate the timer when this view disappears
     [NSTimer scheduledTimerWithTimeInterval:60 target:self selector:@selector(checkThermostatMode) userInfo:nil repeats:YES];
     
     
@@ -298,7 +299,7 @@ static NSString * const kRefreshToken = @"refresh_token";
             
             [temperatureAdjustment setDefaults];
             [temperatureAdjustment setValue:inputImage forKey:@"inputImage"];
-            [temperatureAdjustment setValue:[CIVector vectorWithX:500 Y:0] forKey:@"inputNeutral"];
+            [temperatureAdjustment setValue:[CIVector vectorWithX:8500 Y:0] forKey:@"inputNeutral"];
             [temperatureAdjustment setValue:[CIVector vectorWithX:slider.value Y:0] forKey:@"inputTargetNeutral"];
             
             CIImage *outputImage = [temperatureAdjustment outputImage];
@@ -343,7 +344,7 @@ static NSString * const kRefreshToken = @"refresh_token";
             [temperatureAdjustment setDefaults];
             [temperatureAdjustment setValue:inputImage forKey:@"inputImage"];
             [temperatureAdjustment setValue:[CIVector vectorWithX:slider.value Y:0] forKey:@"inputNeutral"];
-            [temperatureAdjustment setValue:[CIVector vectorWithX:300 Y:0] forKey:@"inputTargetNeutral"];
+            [temperatureAdjustment setValue:[CIVector vectorWithX:9500 Y:0] forKey:@"inputTargetNeutral"];
             
             CIImage *outputImage = [temperatureAdjustment outputImage];
             
