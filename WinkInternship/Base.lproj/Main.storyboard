@@ -469,10 +469,10 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="OFF" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PdI-Bz-YYD">
-                                <rect key="frame" x="203" y="198" width="65" height="54"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="OFF" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PdI-Bz-YYD">
+                                <rect key="frame" x="187" y="198" width="81" height="54"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="65" id="KdI-7u-EJL"/>
+                                    <constraint firstAttribute="width" constant="80" id="KdI-7u-EJL"/>
                                     <constraint firstAttribute="height" constant="54" id="UcC-Dx-vjW"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="32"/>

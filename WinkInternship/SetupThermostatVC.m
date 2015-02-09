@@ -154,14 +154,6 @@ static NSString * const kRefreshToken = @"refresh_token";
                                           return;
                                       } else {
                                           
-                                          if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-                                              NSLog(@"Response HTTP Status code: %ld\n", (long)[(NSHTTPURLResponse *)response statusCode]);
-                                              NSLog(@"Response HTTP Headers:\n%@\n", [(NSHTTPURLResponse *)response allHeaderFields]);
-                                          }
-                                          
-                                          NSString* body = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-                                          NSLog(@"Response Body:\n%@\n", body);
-                                          
                                           dispatch_async(dispatch_get_main_queue(), ^{
                                               [self resultsFromRequest:data];
                                           });
@@ -233,37 +225,5 @@ static NSString * const kRefreshToken = @"refresh_token";
 
 
 
-
-
-
-
-//self.indexPathSelected = [[NSIndexPath alloc] init];
-//self.indexPathSelected = nil;
-
-
-/*
- BrandTableCell *currentCell = (BrandTableCell *)[tableView cellForRowAtIndexPath:indexPath];
- 
- UIImage *currentBrandImage = currentCell.brandImageView.image;
- 
- 
- 
- 
- 
- //Change what a Cell Looks like on Selection
- CIContext * context = [CIContext contextWithOptions:nil];
- CIImage * ciImage = [[CIImage alloc] initWithImage:currentBrandImage];
- 
- CIFilter * blurFilter = [CIFilter filterWithName:@"CIGaussianBlur"];
- [blurFilter setValue:ciImage forKey:kCIInputImageKey];
- 
- CGImageRef ref = [context createCGImage:blurFilter.outputImage fromRect:[blurFilter outputImage].extent];
- 
- currentCell.brandImageView.image = [UIImage imageWithCGImage:ref];
- 
- 
- //Call to the API to find the Resource with the Specified Brand Name
- 
- */
 
 @end

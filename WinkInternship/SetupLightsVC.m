@@ -143,14 +143,6 @@ static NSString * const kRefreshToken = @"refresh_token";
                                       
                                       } else {
                                           
-                                          if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-                                              NSLog(@"Response HTTP Status code: %ld\n", (long)[(NSHTTPURLResponse *)response statusCode]);
-                                              NSLog(@"Response HTTP Headers:\n%@\n", [(NSHTTPURLResponse *)response allHeaderFields]);
-                                          }
-                                          
-                                          NSString* body = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-                                          NSLog(@"Response Body:\n%@\n", body);
-                                          
                                           dispatch_async(dispatch_get_main_queue(), ^{
                                               [self resultsFromRequest:data];
                                           });
@@ -167,6 +159,7 @@ static NSString * const kRefreshToken = @"refresh_token";
 }
 
 //Parsing Through Response for Lights
+//Note: All lights are returned by this request and then matched to the selected brand.
 - (void)resultsFromRequest:(NSData *)data {
     
     NSError *errorJSON;
@@ -197,12 +190,10 @@ static NSString * const kRefreshToken = @"refresh_token";
             [self.selectedLights addObject:newLight];
         }
         
-        
-        
     }
     
     
-    //Update View
+    //Update View with Number of Lights Found
     if (numberOfLights >= 1) {
         self.lightsTextLabel.text = [NSString stringWithFormat:@"Found %d Lights", numberOfLights];
     } else {
@@ -222,57 +213,6 @@ static NSString * const kRefreshToken = @"refresh_token";
     controlViewController.userThermostats = self.selectedThermostats;
     
 }
-
-
-
-/*
- #pragma mark - Navigation
- 
- // In a storyboard-based application, you will often want to do a little preparation before navigation
- - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
- // Get the new view controller using [segue destinationViewController].
- // Pass the selected object to the new view controller.
- }
- */
-
-
-
-/*
-+ (NSURLSessionDataTask *)fromURL:(NSString *)url completionHandler:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completionHandler {
-    
-    
-    NSURL *urlForRequest = [NSURL URLWithString:url];
-    NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:urlForRequest];
-    
-    //Grab the tokens
-    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    NSString *accessToken = [userDefaults objectForKey:kAccessToken];
-    NSString *valueForHTTPHeader = [NSString stringWithFormat:@"Bearer %@", accessToken];
-    
-    
-    [urlRequest setHTTPMethod:@"GET"];
-    [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    [urlRequest setValue:valueForHTTPHeader forHTTPHeaderField:@"Authorization"];
-
-    NSURLSession *session = [NSURLSession sharedSession];
-
-    NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:urlRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-        if (completionHandler)
-            completionHandler(data, response, error);
-    }];
-    
-    [dataTask resume];
-    
-    return dataTask;
-}
-
-*/
-
-//Refresh SelectedLights
-//self.selectedLights = nil;
-
-//self.navigationItem.backBarButtonItem=[[UIBarButtonItem alloc] initWithTitle:@" " style:UIBarButtonItemStylePlain target:nil action:nil];
-
 
 
 

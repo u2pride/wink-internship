@@ -145,23 +145,23 @@ static NSString * const kRefreshToken = @"refresh_token";
                                           
                                           //Grab the thermostat mode and powered status
                                           NSString *mode = thermostatDictionary[@"mode"];
-                                          NSString *powereed = thermostatDictionary[@"powered"];
+                                          NSString *powered = thermostatDictionary[@"powered"];
                                           
-                                          if ([powereed isEqualToString:@"on"]) {
+                                          if ([powered isEqualToString:@"on"]) {
                                               
                                               if ([mode isEqualToString:@"heat"]) {
                                                   dispatch_async(dispatch_get_main_queue(), ^{
                                                       [self updateTemperatureOfActiveLights:self.warmSlider.value];
                                                   });
                                                   
-                                                  self.thermostatStatusLabel.text = @"Thermostat Status: Heat";
+                                                  self.thermostatStatusLabel.text = @"HEAT";
                                                   
                                               } else if ([mode isEqualToString:@"cool"]) {
                                                   dispatch_async(dispatch_get_main_queue(), ^{
                                                       [self updateTemperatureOfActiveLights:self.coolSlider.value];
                                                   });
                                                   
-                                                  self.thermostatStatusLabel.text = @"Thermostat Status: Cool";
+                                                  self.thermostatStatusLabel.text = @"COOL";
                                               }
                                               
                                           } else {
@@ -170,7 +170,7 @@ static NSString * const kRefreshToken = @"refresh_token";
                                                   [self updateTemperatureOfActiveLights:6500];
                                               });
                                               
-                                              self.thermostatStatusLabel.text = @"Thermostat Status: Off";
+                                              self.thermostatStatusLabel.text = @"OFF";
                                           }
                                           
                                       }
@@ -185,17 +185,19 @@ static NSString * const kRefreshToken = @"refresh_token";
 
 
 //PUT Temperature Updates to the Lights Currently Selected by the User
+//Note: Temperature Property does not currently exist in API for lights.
 - (void)updateTemperatureOfActiveLights:(float)temperature {
-    
+        
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     NSString *accessToken = [userDefaults objectForKey:kAccessToken];
     
     NSString *valueForHTTPHeader = [NSString stringWithFormat:@"Bearer %@", accessToken];
     
     //Grab each light and Update the Temperature Based on Thermostat Status
-    for (LightInWink *light in self.userLights) {
+    for (NSNumber *lightID in self.activeLightsForTemperatureEffect) {
         
-        NSString *urlString = [NSString stringWithFormat:@"%@/light_bulbs/%@", BaseAPIString, light.lightID];
+        NSString *urlString = [NSString stringWithFormat:@"%@/light_bulbs/%@", BaseAPIString, lightID];
+        NSLog(@"urlSTring : %@", urlString);
         
         NSURL *url = [NSURL URLWithString:urlString];
         NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:url];
@@ -237,32 +239,13 @@ static NSString * const kRefreshToken = @"refresh_token";
                                               
                                               NSLog(@"Light Temperature Updated");
                                               
-                                              if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-                                                  NSLog(@"Response HTTP Status code: %ld\n", (long)[(NSHTTPURLResponse *)response statusCode]);
-                                                  NSLog(@"Response HTTP Headers:\n%@\n", [(NSHTTPURLResponse *)response allHeaderFields]);
-                                              }
-                                              
-                                              NSString* body = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-                                              NSLog(@"Response Body:\n%@\n", body);
-                                              
                                           }
-                                          
-
-                                          
-                                          
+                                        
                                       }];
         [task resume];
         
     }
 }
-
-
-
-
-
-
-
-
 
 
 
@@ -294,7 +277,6 @@ static NSString * const kRefreshToken = @"refresh_token";
         
     }
     
-    //NSLog(@"Current Active Lights = %@", self.activeLightsForTemperatureEffect);
 
 }
 
@@ -302,7 +284,8 @@ static NSString * const kRefreshToken = @"refresh_token";
 
 
 
-
+//Preview Warmth Adjustment on Light Bulb Images
+//Note - I didn't figure out exactly how the CITemperatureAndTint filter works.
 - (IBAction)warmSliderChangedValue:(id)sender {
     
     if (self.numberOfWarmSliderValueUpdates.integerValue > 10) {
@@ -345,6 +328,8 @@ static NSString * const kRefreshToken = @"refresh_token";
 
 
 
+//Preview Cool Adjustment on Light Bulb Images
+//Note - I didn't figure out exactly how the CITemperatureAndTint filter works.
 - (IBAction)coolSliderChangedValue:(id)sender {
     
     if (self.numberOfCoolSliderValueUpdates.integerValue > 10) {
@@ -386,7 +371,7 @@ static NSString * const kRefreshToken = @"refresh_token";
 }
 
 
-//Reset the Image Views to their original color
+//Reset the Image Views to their Original State after the 5 Second Preview
 - (void)resetImageViews {
     
     for (UIImageView *lightBulbImageView in self.allLightImageViews) {
@@ -415,143 +400,4 @@ static NSString * const kRefreshToken = @"refresh_token";
 
 
 
-
-
-
-
-
-
-
-
-/*
- CIImage *inputImage = [[CIImage alloc] initWithImage:[UIImage imageNamed:@"BulbLit"]];
- CIFilter *temperatureAdjustment = [CIFilter filterWithName:@"CITemperatureAndTint"];
- 
- [temperatureAdjustment setDefaults];
- [temperatureAdjustment setValue:inputImage forKey:@"inputImage"];
- [temperatureAdjustment setValue:[CIVector vectorWithX:100 Y:0] forKey:@"inputNeutral"];
- [temperatureAdjustment setValue:[CIVector vectorWithX:10000 Y:0] forKey:@"inputTargetNeutral"];
- 
- CIImage *outputImage = [temperatureAdjustment valueForKey:@"outputImage"];
- 
- CIContext *context = [CIContext contextWithOptions:nil];
- tappedImage.image = [UIImage imageWithCGImage:[context createCGImage:outputImage fromRect:outputImage.extent]];
- 
- */
-
-/*
-- (IBAction)startLightCorrection:(id)sender {
-    
-    
-    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    NSString *accessToken = [userDefaults objectForKey:kAccessToken];
-    
-    NSString *valueForHTTPHeader = [NSString stringWithFormat:@"Bearer %@", accessToken];
-    
-    LightInWink *exampleLight = [self.userLights objectAtIndex:1];
-    
-    NSString *stringForURL = [NSString stringWithFormat:@"https://winkapi.quirky.com/light_bulbs/%@", exampleLight.lightID];
-    
-    //Call to the API using User Token to Find Light Resources
-    NSURL *url = [NSURL URLWithString:stringForURL];
-    NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:url];
-    
-    [urlRequest setHTTPMethod:@"PUT"];
-    [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    [urlRequest setValue:valueForHTTPHeader forHTTPHeaderField:@"Authorization"];
-    
-    
-    NSDictionary* info = [NSDictionary dictionaryWithObjectsAndKeys:
-                          [NSNumber numberWithBool:true],
-                          @"powered",
-                          [NSNumber numberWithFloat:1.0],
-                          @"brightness",
-                          nil];
-    
-    NSDictionary* info2 = [NSDictionary dictionaryWithObjectsAndKeys:
-                           info,
-                           @"desired_state",
-                           nil];
-    
-    NSError *errorJSON;
-    //convert object to data
-    NSData* jsonData = [NSJSONSerialization dataWithJSONObject:info2 options:NSJSONWritingPrettyPrinted error:&errorJSON];
-    
-    NSLog(@"%@", [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding]);
-    
-    
-    //[urlRequest setHTTPBody:jsonData];
-    
-    
-    
-    
-    NSURLSession *session = [NSURLSession sharedSession];
-    NSURLSessionDataTask *task = [session dataTaskWithRequest:urlRequest
-                                            completionHandler:
-                                  ^(NSData *data, NSURLResponse *response, NSError *error) {
-                                      
-                                      if (error) {
-                                          
-                                          UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Error in Request" delegate:self cancelButtonTitle:@"done" otherButtonTitles: nil];
-                                          
-                                          [errorAlert show];
-                                          
-                                          return;
-                                      }
-                                      
-                                      if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-                                          NSLog(@"Response HTTP Status code: %ld\n", (long)[(NSHTTPURLResponse *)response statusCode]);
-                                          NSLog(@"Response HTTP Headers:\n%@\n", [(NSHTTPURLResponse *)response allHeaderFields]);
-                                      }
-                                      
-                                      NSString* body = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-                                      NSLog(@"Response Body:\n%@\n", body);
-                                      
-                                      
-                                      
-                                  }];
-    [task resume];
-    
-}
-
-*/
-
-
-/*
- CIImage *inputImage = [[CIImage alloc] initWithImage:[UIImage imageNamed:@"BulbOff"]];
- CIFilter *temperatureAdjustment = [CIFilter filterWithName:@"CITemperatureAndTint"];
- 
- [temperatureAdjustment setDefaults];
- [temperatureAdjustment setValue:inputImage forKey:@"inputImage"];
- [temperatureAdjustment setValue:[CIVector vectorWithX:10000 Y:0] forKey:@"inputNeutral"];
- [temperatureAdjustment setValue:[CIVector vectorWithX:10000 Y:0] forKey:@"inputTargetNeutral"];
- 
- CIImage *outputImage = [temperatureAdjustment valueForKey:@"outputImage"];
- 
- CIContext *context = [CIContext contextWithOptions:nil];
- tappedImage.image = [UIImage imageWithCGImage:[context createCGImage:outputImage fromRect:outputImage.extent]];
- */
-
-//self.timerToResetImages = [[NSTimer alloc] init];
-
-
-//NSString *urlString = [NSString stringWithFormat:@"https://winkapi.quirky.com/thermostats/%@", thermostat.thermostatID];
-//NSString *stringForURL = [NSString stringWithFormat:@"https://winkapi.quirky.com/light_bulbs/%@", light.lightID];
-//NSLog(@"Number Of Updates: %@", self.numberOfCoolSliderValueUpdates);
-
-//    NSLog(@"Number Of Updates: %@", self.numberOfWarmSliderValueUpdates);
-
-//UIImageView *lightBulbImageView = [self.allLightImageViews firstObject];
-
-
-/*
-NSLog(@"%@", lightBulbImageView);
-NSLog(@"slidervalue: %f", slider.value);
- 
- //CIImage *outputImage = [temperatureAdjustment valueForKey:@"outputImage"];
-
- //NSLog(@"%@", [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding]);
-
- 
-*/
 @end
